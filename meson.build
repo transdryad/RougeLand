@@ -2,4 +2,6 @@ project('RougeLand', 'cpp',
         version : '1.0.0',
         default_options : ['warning_level=3', 'cpp_std=c++20'])
 
-RougeLand = executable('RougeLand', 'main.cpp', install : true)
+ftxui = dependency('ftxui')
+
+RougeLand = executable('RougeLand', 'src/main.cpp', install : true, dependencies: ftxui)
