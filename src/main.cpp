@@ -15,5 +15,14 @@ int main() {
         return EXIT_FAILURE;
     }
     logger->info("Welcome to RougeLand!");
+    logger->info("Initializing libtcod.");
+    TCODConsole::initRoot(80,50,"RougeLand",false);
+    while (!TCODConsole::isWindowClosed()) {
+	TCOD_key_t key;
+	TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS,&key,null);
+	TCODConsole::root->clear();
+	TCODConsole::root->putChar(40,25,'@');
+	TCODConsole::flush();
+    }
     return EXIT_SUCCESS;
 }

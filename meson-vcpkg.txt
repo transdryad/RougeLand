@@ -1,0 +1,10 @@
+[constants]
+vcpkg_base_path = '/home/hazel/.local/share/vcpkg/'
+
+[properties]
+cmake_toolchain_file = vcpkg_base_path + 'scripts/buildsystems/vcpkg.cmake'
+
+[binaries]
+vcpkg = '/usr/bin/vcpkg'
+pkgconfig = ''
+
