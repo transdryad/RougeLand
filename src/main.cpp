@@ -1,11 +1,9 @@
 #include <iostream>
-#include <ftxui/screen/screen.hpp>
-#include <ftxui/dom/elements.hpp>
+#include "include/libtcod.hpp"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include <string>
-
-using namespace ftxui;
+#include <fmt/core.h>
 
 int main() {
     std::shared_ptr<spdlog::logger> logger;
@@ -17,11 +15,5 @@ int main() {
         return EXIT_FAILURE;
     }
     logger->info("Welcome to RougeLand!");
-    Element document = hbox({
-        text("left")   | border,
-        text("Hello Worlds!") | border | flex,
-        text("right")  | border,});
-    auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
-    Render(screen, document);
-    screen.Print();
+    return EXIT_SUCCESS;
 }
