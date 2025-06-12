@@ -6,22 +6,9 @@
 #include <cstdio>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include "entity.hpp"
 
-class Player{
-    public:
-	int x = 0;
-	int y = 0;
-	std::string character = "@";
-	void move(int dx, int dy) {
-	    x += dx;
-	    y += dy;
-	}
-	void render(tcod::Console& rconsole) {
-	    tcod::print(rconsole, {x, y}, character, {{255, 255, 255}}, std::nullopt);
-	}
-};
-
-Player player;
+Entity player;
 auto logger = spdlog::basic_logger_mt("file", "log.txt");
 
 int main(const int argc, char* argv[]) {
@@ -52,6 +39,10 @@ int main(const int argc, char* argv[]) {
 
     player.x = 39;
     player.y = 21;
+    player.character = "@";
+    player.fg.r = 255;
+    player.fg.g = 255;
+    player.fg.b = 255;
 
     logger->info("Entering main loop.");
     while (true) {
