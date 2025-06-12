@@ -1,6 +1,6 @@
 project('RougeLand', 'cpp',
         version : '1.0.0',
-        default_options : ['default_library=static', 'warning_level=3', 'cpp_std=c++20'])
+        default_options : ['default_library=static', 'prefer_static=true', 'warning_level=3', 'cpp_std=c++20'])
 
 cmake = import('cmake')
 opt_var = cmake.subproject_options()
