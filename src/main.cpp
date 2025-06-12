@@ -75,6 +75,14 @@ int main(const int argc, char* argv[]) {
 			    player.move(0, 1); break;
 			case SDL_SCANCODE_D:
 			    player.move(1, 0); break;
+			case SDL_SCANCODE_Q:
+			    player.move(-1, -1); break;
+			case SDL_SCANCODE_E:
+			    player.move(1, -1); break;
+			case SDL_SCANCODE_Z:
+			    player.move(-1, 1); break;
+			case SDL_SCANCODE_C:
+			    player.move(1, 1); break;
 			default:
 			    break;
 		   } 
