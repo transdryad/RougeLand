@@ -10,10 +10,12 @@
 #include <SDL3/SDL_main.h>
 #include "entity.hpp"
 #include <functional>
+#include "map.hpp"
 
 Entity player(39, 21, "@", {255, 255, 255});
 auto logger = spdlog::basic_logger_mt("file", "log.txt");
 std::vector<std::reference_wrapper<Entity>> entities;
+GameMap map;
 
 void handle_events(tcod::Context& context) {
     SDL_Event event;
@@ -49,6 +51,7 @@ void handle_events(tcod::Context& context) {
 
 void render(tcod::Console& console, tcod::Context& context) {
     console.clear();
+    map.render(console);
     for (Entity& entity : entities) {
 	entity.render(console);
     }
@@ -66,10 +69,12 @@ int main(const int argc, char* argv[]) {
     logger->info("Welcome to RougeLand!");
     logger->info("Initializing libTCOD.");
 
-    auto tileset = tcod::load_tilesheet("src/tileset.png",{16, 16}, tcod::CHARMAP_CP437);
+    auto tileset = tcod::load_tilesheet("src/tileset.png", {16, 16}, tcod::CHARMAP_CP437);
+    
+    logger->info("Loading Entities in vectors.");
 
     entities.push_back(player);
-    Entity npc(30, 20, "@", {255, 255, 255});
+    Entity npc(30, 20, "@", {255, 255, 0});
     entities.push_back(npc);
 
     tcod::Console console = tcod::Console{80, 45};

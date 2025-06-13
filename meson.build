@@ -15,4 +15,4 @@ spdlog = dependency('spdlog')
 fmt = dependency('fmt')
 libtcod = sub_pro.dependency('libtcod')
 
-RougeLand = executable('RougeLand', 'src/main.cpp', 'src/entity.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
+RougeLand = executable('RougeLand', 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
