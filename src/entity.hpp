@@ -5,10 +5,11 @@
 
 class Entity {
     public:
-	int x = 0;
-	int y = 0;
-	std::string character = "@";
-	tcod::ColorRGB fg;
+	int x;
+	int y;
+	std::string character;
+	tcod::ColorRGB color;
+	Entity(int x, int y, std::string character, tcod::ColorRGB color);
 	void move(int dx, int dy);
 	void render(tcod::Console& rconsole);
 };
