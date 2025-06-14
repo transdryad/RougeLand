@@ -1,7 +1,26 @@
 #include "map.hpp"
 #include "libtcod.hpp"
+#include <cmath>
+#include <random>
+
+Point GameMap::pointInCircle(int radius) {
+    double t = 2*M_PI*(this->distrib(this->gen));
+    double u = this->distrib(this->gen)+this->distrib(this->gen);
+    double r = 0.0;
+    if (u > 1) {
+	r = 2 - u;
+    } else {
+	r = u;
+    }
+    return {radius*r*cos(t), radius*r*sin(t)};
+}
 
 GameMap::GameMap() {
+    std::random_device rd;
+    this->gen = std::mt19937(rd());
+    this->distrib = std::uniform_int_distribution<>(0, 1);
+    
+
     for (const auto& row : this->tiles) {
 	for (MapTile tile : row) {
 	    tile.solid = false;
