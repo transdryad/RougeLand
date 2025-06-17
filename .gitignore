@@ -7,3 +7,5 @@ buildDir
 log.txt
 
 subprojects/libtcod
+subprojects/libtcod/
+subprojects/libtcod/*
