@@ -18,11 +18,13 @@ struct Point{
 
 class GameMap{
     public:
-		GameMap();
-		TCODBsp bsptree;
-		MapTile tiles[80][45];
-		bool isWalkable(int x, int y) const;
-		bool isSolid(int x, int y) const;
-		void render(tcod::Console& rconsole);
-		void drawInBounds(int x, int y, int w, int h);
+    	GameMap();
+	TCODBsp bsptree;
+	MapTile tiles[80][45];
+	void connect(const TCODBsp* left, const TCODBsp* right);
+	bool isWalkable(int x, int y) const;
+	bool isSolid(int x, int y) const;
+	void render(tcod::Console& rconsole);
+	void drawInBounds(int x, int y, int w, int h);
+	int distance(int x, int y, int tx, int ty);
 };

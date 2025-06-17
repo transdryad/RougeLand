@@ -12,10 +12,11 @@
 #include <functional>
 #include "map.hpp"
 
-Entity player(39, 21, "@", {255, 255, 255});
 auto logger = spdlog::basic_logger_mt("file", "log.txt");
 std::vector<std::reference_wrapper<Entity>> entities;
 GameMap map;
+Entity player(39, 21, "@", {255, 255, 255}, map);
+TCODRandom* randomizer = TCODRandom::getInstance();
 
 void handle_events(tcod::Context& context) {
     SDL_Event event;
@@ -74,8 +75,8 @@ int main(const int argc, char* argv[]) {
     logger->info("Loading Entities in vectors.");
 
     entities.push_back(player);
-    Entity npc(30, 20, "@", {255, 255, 0});
-    entities.push_back(npc);
+    Entity npc(30, 20, "@", {255, 255, 0}, map);
+    //entities.push_back(npc);
 
     tcod::Console console = tcod::Console{80, 45};
     auto params = TCOD_ContextParams{};
@@ -89,6 +90,15 @@ int main(const int argc, char* argv[]) {
     params.tileset = tileset.get();
 
     auto context = tcod::Context(params);
+
+    while (true) { // Always spawn the player in a room.
+	if (map.isWalkable(player.x, player.y)) {
+	    break;
+	} else {
+	    player.x += randomizer->getInt(-1, 1);
+	    player.y += randomizer->getInt(-1, 1);
+	}
+    }
 
     logger->info("Entering main loop.");
     while (true) {

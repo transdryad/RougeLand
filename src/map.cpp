@@ -5,6 +5,11 @@
 #include "libtcod.hpp"
 #include <random>
 #include <fmt/base.h>
+#include <cstdlib>
+
+int GameMap::distance(int x, int y, int tx, int ty) {
+    return abs(tx - x) + abs(ty - y);
+}
 
 void GameMap::drawInBounds(int nx, int ny, int w, int h) {
     //printf("Carving");
@@ -19,7 +24,7 @@ void GameMap::drawInBounds(int nx, int ny, int w, int h) {
     int bottom_y = top_y + random->getInt(3, 15);
     if (bottom_x >= w) bottom_x = max_x - 1;
     if (bottom_y >= h) bottom_y = max_y - 1;
-    printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
+    //printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
     if (bottom_x < top_x) exit(1);
     if (bottom_y < top_y) exit(1);
     int otop_x = top_x;
@@ -31,6 +36,29 @@ void GameMap::drawInBounds(int nx, int ny, int w, int h) {
     }
 }
 
+void GameMap::connect(const TCODBsp* left, const TCODBsp* right) {
+    int distances[left->x + left->w][left->y + left->h][right->x + right->w][right->y + right->h];
+    int s[] = {0, 0, 0, 0};
+    distances[0][0][0][0] = 500;
+    for (int x = left->w; x < left->x + left->w; x++) {
+        for (int y = left->y; y < left->y + left->h; y++) {
+            for (int xx = right->x; x < right->x + right->w; xx++) {
+                for (int yy = right->y; y < right->y + right->h; yy++) {
+                    if (this->isWalkable(x, y) && this->isWalkable(xx, yy) && !this->isSolid(x, y) && !this->isSolid(xx, yy)) {
+                        distances[x][y][xx][yy] = this->distance(x, y, xx, yy);
+                        if (distances[x][y][xx][yy] < distances[s[0]][s[1]][s[2]][s[3]]) {
+                            s[0] = x;
+                            s[1] = y;
+                            s[2] = xx;
+                            s[3] = yy;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    printf("Shortest path between rooms: %d,%d to %d,%d.\n", s[0], s[1], s[2], s[3]);
+}
 
 class NodeCallback final : public ITCODBspCallback {
 public:
@@ -38,12 +66,15 @@ public:
     NodeCallback(GameMap& map): mapref(map) {}
 
     bool visitNode(TCODBsp *node, void *userData) override {
-        if (node->level != 4) {
+        if (!node->isLeaf()) {
+	    TCODBsp* left = node->getLeft();
+	    TCODBsp* right = node->getRight();
+	    mapref.connect(left, right);
             return true;
         }
-        printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y,node->level);
+        printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
         mapref.drawInBounds(node->x,node->y,node->w,node->h);
-    return true;
+	return true;
     }
 };
 
