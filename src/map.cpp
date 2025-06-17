@@ -13,17 +13,19 @@ void GameMap::drawInBounds(int nx, int ny, int w, int h) {
     int min_y = ny;
     int max_x = nx + w;
     int max_y = ny + h;
-    int top_x = random->getInt(min_x, max_x);
-    int top_y = random->getInt(min_y, max_y);
-    int bottom_x = top_x + random->getInt(1, 15);
-    int bottom_y = top_y + random->getInt(1, 15);
-    if (bottom_x >= w) bottom_x = w - 1;
-    if (bottom_y >= h) bottom_y = h - 1;
+    int top_x = random->getInt(min_x + 1, max_x - 4);
+    int top_y = random->getInt(min_y + 1, max_y - 4);
+    int bottom_x = top_x + random->getInt(3, 15);
+    int bottom_y = top_y + random->getInt(3, 15);
+    if (bottom_x >= w) bottom_x = max_x - 1;
+    if (bottom_y >= h) bottom_y = max_y - 1;
     printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
+    if (bottom_x < top_x) exit(1);
+    if (bottom_y < top_y) exit(1);
+    int otop_x = top_x;
     for (; top_y < bottom_y; top_y++) {
-        if (top_y > 44) break;
+        top_x = otop_x;
         for (; top_x < bottom_x; top_x++) {
-            if (top_x > 79) break;
             this->tiles[top_x][top_y] = {false, true, " ", {255,255,255}};
         }
     }
@@ -36,7 +38,7 @@ public:
     NodeCallback(GameMap& map): mapref(map) {}
 
     bool visitNode(TCODBsp *node, void *userData) override {
-        if (node->level != 5) {
+        if (node->level != 4) {
             return true;
         }
         printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y,node->level);
@@ -53,7 +55,7 @@ GameMap::GameMap() {
     }
 
     this->bsptree = TCODBsp(0, 0, 80, 45);
-    this->bsptree.splitRecursive(TCODRandom::getInstance(), 5, 3, 3, 1.5, 1.5);
+    this->bsptree.splitRecursive(TCODRandom::getInstance(), 4, 3, 3, 1.5, 1.5);
     this->bsptree.traversePostOrder(new NodeCallback(*this), nullptr);
 }
 
