@@ -3,6 +3,8 @@
 #include <string>
 #include "libtcod.hpp"
 #include <random>
+#include <vector>
+#include <functional>
 
 struct MapTile{
     bool solid;
@@ -16,15 +18,30 @@ struct Point{
     double y;
 };
 
+class GameMap;
+
+class RectRoom{
+    public:
+	int x;
+	int y;
+	int xx;
+	int yy;
+	RectRoom(int x, int y, int xx, int yy);
+	void draw(GameMap* map);
+};
+
 class GameMap{
     public:
     	GameMap();
 	TCODBsp bsptree;
 	MapTile tiles[80][45];
 	void connect(const TCODBsp* left, const TCODBsp* right);
+	std::vector<std::reference_wrapper<RectRoom>> rooms;
 	bool isWalkable(int x, int y) const;
 	bool isSolid(int x, int y) const;
 	void render(tcod::Console& rconsole);
+	void compute();
 	void drawInBounds(int x, int y, int w, int h);
+	void wipe();
 	int distance(int x, int y, int tx, int ty);
 };

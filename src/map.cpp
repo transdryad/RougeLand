@@ -1,11 +1,26 @@
 #include "map.hpp"
 
-#include <map>
-
 #include "libtcod.hpp"
 #include <random>
 #include <fmt/base.h>
 #include <cstdlib>
+
+RectRoom::RectRoom(int x, int y, int xx, int yy) {
+    this->x = x;
+    this->y = y;
+    this->xx = xx;
+    this->yy = yy;
+}
+
+void RectRoom::draw(GameMap* map) {
+    printf("Drawing room.");
+    for (int i = this->y; i < this->yy; i++) {
+	for (int j = this->x; j < this->xx; j++) {
+	    map->tiles[j][i] = {false, true, " ", {255, 255, 255}};
+	}
+    }
+    printf("Done");
+}
 
 int GameMap::distance(int x, int y, int tx, int ty) {
     return abs(tx - x) + abs(ty - y);
@@ -24,16 +39,18 @@ void GameMap::drawInBounds(int nx, int ny, int w, int h) {
     int bottom_y = top_y + random->getInt(3, 15);
     if (bottom_x >= w) bottom_x = max_x - 1;
     if (bottom_y >= h) bottom_y = max_y - 1;
-    //printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
+    printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
     if (bottom_x < top_x) exit(1);
     if (bottom_y < top_y) exit(1);
-    int otop_x = top_x;
-    for (; top_y < bottom_y; top_y++) {
-        top_x = otop_x;
-        for (; top_x < bottom_x; top_x++) {
-            this->tiles[top_x][top_y] = {false, true, " ", {255,255,255}};
-        }
-    }
+    RectRoom room(top_x, top_y, bottom_x, bottom_y);
+    this->rooms.push_back(room);
+    //int otop_x = top_x;
+    //for (; top_y < bottom_y; top_y++) {
+      //  top_x = otop_x;
+        //for (; top_x < bottom_x; top_x++) {
+          //  this->tiles[top_x][top_y] = {false, true, " ", {255,255,255}};
+        //}
+    //}
 }
 
 void GameMap::connect(const TCODBsp* left, const TCODBsp* right) {
@@ -69,7 +86,7 @@ public:
         if (!node->isLeaf()) {
 	    TCODBsp* left = node->getLeft();
 	    TCODBsp* right = node->getRight();
-	    mapref.connect(left, right);
+	    //mapref.connect(left, right);
             return true;
         }
         printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
@@ -79,15 +96,13 @@ public:
 };
 
 GameMap::GameMap() {
-    for (int y = 0; y < 45; y++) {
-        for (auto & tile : this->tiles) {
-            tile[y] = {true, false, "#", {255,255,255}};
-        }
-    }
-
+    this->wipe();
+     
     this->bsptree = TCODBsp(0, 0, 80, 45);
     this->bsptree.splitRecursive(TCODRandom::getInstance(), 4, 3, 3, 1.5, 1.5);
     this->bsptree.traversePostOrder(new NodeCallback(*this), nullptr);
+
+    this->compute();
 }
 
 bool GameMap::isWalkable(int x, int y) const {
@@ -107,4 +122,19 @@ void GameMap::render(tcod::Console& rconsole) {
         //printf("%d\n", y);
     }
     //printf("\n");
+}
+
+void GameMap::wipe() {
+    for (int y = 0; y < 45; y++) {
+	for (auto & tile : this->tiles) {
+	    tile[y] = {true, false, "#", {255, 255, 255}};
+	}
+    }
+}
+
+void GameMap::compute() {
+    this->wipe();
+    for (RectRoom room : this->rooms) {
+	room.draw(this);	
+    }
 }
