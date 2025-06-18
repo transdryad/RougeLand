@@ -4,12 +4,50 @@
 #include <random>
 #include <fmt/base.h>
 #include <cstdlib>
+#include <cmath>
 
-RectRoom::RectRoom(int x, int y, int xx, int yy) {
+Hallway::Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y) {
+    this->x1 = x1;
+    this->x2 = x2;
+    this->y1 = y1;
+    this->y2 = y2;
+    this->corner_x = corner_x;
+    this->corner_y = corner_y;
+}
+
+void Hallway::draw(GameMap* map) {
+    int x = this->x1;
+    int y = this->y1;
+    TCODLine::init(x, y, this->corner_x, this->corner_y);
+    do {
+	map->tiles[x][y] = {false, true, " ", {255, 255, 255}};
+    } while (!TCODLine::step(&x, &y));
+    x = this->x2;
+    y = this->y2;
+    TCODLine::init(this->corner_x, this->corner_y, x, y);
+    do {
+	map->tiles[x][y] = {false, true, " ", {255, 255, 255}};
+    } while (!TCODLine::step(&x, &y));
+}
+
+RectRoom GameMap::roomFromNode(TCODBsp* node) {
+    for (int i = 0; i < this->rooms.size(); i++) {
+	while (node->level < this->rooms[i].node->level) {
+	    node = node->getLeft();
+	}
+	if (this->rooms[i].node == node) return this->rooms[i];
+    }
+    exit(1);
+}
+
+RectRoom::RectRoom(int x, int y, int xx, int yy, TCODBsp* node) {
     this->x = x;
     this->y = y;
     this->xx = xx;
     this->yy = yy;
+    this->node = node;
+    this->cx = static_cast<int>(std::round(x + xx) / 2);
+    this->cy = static_cast<int>(std::round(y + yy) / 2);
 }
 
 void RectRoom::draw(GameMap* map) {
@@ -26,7 +64,7 @@ int GameMap::distance(int x, int y, int tx, int ty) {
     return abs(tx - x) + abs(ty - y);
 }
 
-void GameMap::drawInBounds(int x, int y, int nx, int ny) {
+void GameMap::drawInBounds(int x, int y, int nx, int ny, TCODBsp* node) {
     //printf("Carving");
     TCODRandom* random = TCODRandom::getInstance();
     int min_x = x;
@@ -42,39 +80,28 @@ void GameMap::drawInBounds(int x, int y, int nx, int ny) {
     printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
     if (bottom_x < top_x) exit(1);
     if (bottom_y < top_y) exit(1);
-    RectRoom room(top_x, top_y, bottom_x, bottom_y);
+    RectRoom room(top_x, top_y, bottom_x, bottom_y, node);
     this->rooms.push_back(room);
-    //int otop_x = top_x;
-    //for (; top_y < bottom_y; top_y++) {
-      //  top_x = otop_x;
-        //for (; top_x < bottom_x; top_x++) {
-          //  this->tiles[top_x][top_y] = {false, true, " ", {255,255,255}};
-        //}
-    //}
 }
 
-void GameMap::connect(const TCODBsp* left, const TCODBsp* right) {
-    int distances[left->x + left->w][left->y + left->h][right->x + right->w][right->y + right->h];
-    int s[] = {0, 0, 0, 0};
-    distances[0][0][0][0] = 500;
-    for (int x = left->w; x < left->x + left->w; x++) {
-        for (int y = left->y; y < left->y + left->h; y++) {
-            for (int xx = right->x; x < right->x + right->w; xx++) {
-                for (int yy = right->y; y < right->y + right->h; yy++) {
-                    if (this->isWalkable(x, y) && this->isWalkable(xx, yy) && !this->isSolid(x, y) && !this->isSolid(xx, yy)) {
-                        distances[x][y][xx][yy] = this->distance(x, y, xx, yy);
-                        if (distances[x][y][xx][yy] < distances[s[0]][s[1]][s[2]][s[3]]) {
-                            s[0] = x;
-                            s[1] = y;
-                            s[2] = xx;
-                            s[3] = yy;
-                        }
-                    }
-                }
-            }
-        }
+void GameMap::connect(TCODBsp* left, TCODBsp* right) { // Partially from RogueLikeTuroials v2022
+    RectRoom lroom = this->roomFromNode(left);
+    RectRoom rroom = this->roomFromNode(right);
+    int x1 = lroom.cx;
+    int x2 = rroom.cx;
+    int y1 = lroom.cy;
+    int y2 = rroom.cy;
+    int corner_x;
+    int corner_y;
+    if (TCODRandom::getInstance()->getFloat(0, 1) < 0.5) {
+	corner_x = x2;
+	corner_y = y1;
+    } else {
+	corner_x = x1;
+	corner_y = y2;
     }
-    printf("Shortest path between rooms: %d,%d to %d,%d.\n", s[0], s[1], s[2], s[3]);
+    Hallway hall(x1, x2, y1, y2, corner_x, corner_y);
+    this->halls.push_back(hall);
 }
 
 class NodeCallback final : public ITCODBspCallback {
@@ -86,11 +113,11 @@ public:
         if (!node->isLeaf()) {
 	    TCODBsp* left = node->getLeft();
 	    TCODBsp* right = node->getRight();
-	    //mapref.connect(left, right);
+	    mapref.connect(left, right);
             return true;
         }
         printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
-        mapref.drawInBounds(node->x,node->y,node->w + node->x, node->h + node->y);
+        mapref.drawInBounds(node->x,node->y,node->w + node->x, node->h + node->y, node);
 	return true;
     }
 };
