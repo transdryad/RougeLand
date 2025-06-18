@@ -13,13 +13,13 @@ RectRoom::RectRoom(int x, int y, int xx, int yy) {
 }
 
 void RectRoom::draw(GameMap* map) {
-    printf("Drawing room.");
+    printf("Drawing room: %d, %d to %d, %d", this->x, this->y, this->xx, this->yy);
     for (int i = this->y; i < this->yy; i++) {
 	for (int j = this->x; j < this->xx; j++) {
 	    map->tiles[j][i] = {false, true, " ", {255, 255, 255}};
 	}
     }
-    printf("Done");
+    printf("Done\n");
 }
 
 int GameMap::distance(int x, int y, int tx, int ty) {
@@ -35,8 +35,8 @@ void GameMap::drawInBounds(int nx, int ny, int w, int h) {
     int max_y = ny + h;
     int top_x = random->getInt(min_x + 1, max_x - 4);
     int top_y = random->getInt(min_y + 1, max_y - 4);
-    int bottom_x = top_x + random->getInt(3, 15);
-    int bottom_y = top_y + random->getInt(3, 15);
+    int bottom_x = top_x + random->getInt(3, 25, 16);
+    int bottom_y = top_y + random->getInt(3, 25, 16);
     if (bottom_x >= w) bottom_x = max_x - 1;
     if (bottom_y >= h) bottom_y = max_y - 1;
     printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
@@ -134,7 +134,7 @@ void GameMap::wipe() {
 
 void GameMap::compute() {
     this->wipe();
-    for (RectRoom room : this->rooms) {
+    for (RectRoom& room : this->rooms) {
 	room.draw(this);	
     }
 }

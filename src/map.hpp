@@ -36,7 +36,7 @@ class GameMap{
 	TCODBsp bsptree;
 	MapTile tiles[80][45];
 	void connect(const TCODBsp* left, const TCODBsp* right);
-	std::vector<std::reference_wrapper<RectRoom>> rooms;
+	std::vector<RectRoom> rooms;
 	bool isWalkable(int x, int y) const;
 	bool isSolid(int x, int y) const;
 	void render(tcod::Console& rconsole);

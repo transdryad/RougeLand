@@ -97,6 +97,8 @@ int main(const int argc, char* argv[]) {
 	} else {
 	    player.x += randomizer->getInt(-1, 1);
 	    player.y += randomizer->getInt(-1, 1);
+	    if (player.x >= 80) player.x = 80;
+	    if (player.y >= 45) player.y = 45;
 	}
     }
 
