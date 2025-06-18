@@ -26,19 +26,19 @@ int GameMap::distance(int x, int y, int tx, int ty) {
     return abs(tx - x) + abs(ty - y);
 }
 
-void GameMap::drawInBounds(int nx, int ny, int w, int h) {
+void GameMap::drawInBounds(int x, int y, int nx, int ny) {
     //printf("Carving");
     TCODRandom* random = TCODRandom::getInstance();
-    int min_x = nx;
-    int min_y = ny;
-    int max_x = nx + w;
-    int max_y = ny + h;
+    int min_x = x;
+    int min_y = y;
+    int max_x = nx;
+    int max_y = ny;
     int top_x = random->getInt(min_x + 1, max_x - 4);
     int top_y = random->getInt(min_y + 1, max_y - 4);
-    int bottom_x = top_x + random->getInt(3, 25, 16);
-    int bottom_y = top_y + random->getInt(3, 25, 16);
-    if (bottom_x >= w) bottom_x = max_x - 1;
-    if (bottom_y >= h) bottom_y = max_y - 1;
+    int bottom_x = top_x + random->getInt(3, 25, 24);
+    int bottom_y = top_y + random->getInt(3, 25, 24);
+    if (bottom_x >= max_x) bottom_x = max_x - 1;
+    if (bottom_y >= max_y) bottom_y = max_y - 1;
     printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
     if (bottom_x < top_x) exit(1);
     if (bottom_y < top_y) exit(1);
@@ -90,7 +90,7 @@ public:
             return true;
         }
         printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
-        mapref.drawInBounds(node->x,node->y,node->w,node->h);
+        mapref.drawInBounds(node->x,node->y,node->w + node->x, node->h + node->y);
 	return true;
     }
 };

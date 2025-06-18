@@ -41,7 +41,7 @@ class GameMap{
 	bool isSolid(int x, int y) const;
 	void render(tcod::Console& rconsole);
 	void compute();
-	void drawInBounds(int x, int y, int w, int h);
+	void drawInBounds(int x, int y, int nx, int ny);
 	void wipe();
 	int distance(int x, int y, int tx, int ty);
 };
