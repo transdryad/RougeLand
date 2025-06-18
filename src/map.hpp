@@ -30,13 +30,13 @@ class RectRoom{
 	int cy;
 	TCODBsp* node;
 	RectRoom(int x, int y, int xx, int yy, TCODBsp* node);
-	void draw(GameMap* map);
+	void draw(GameMap& map);
 };
 
 class Hallway{
     public:
 	Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y);
-	void draw(GameMap* map);
+	void draw(GameMap& map);
 	int x1;
 	int x2;
 	int y1;

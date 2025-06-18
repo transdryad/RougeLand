@@ -15,18 +15,18 @@ Hallway::Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y) {
     this->corner_y = corner_y;
 }
 
-void Hallway::draw(GameMap* map) {
+void Hallway::draw(GameMap& map) {
     int x = this->x1;
     int y = this->y1;
     TCODLine::init(x, y, this->corner_x, this->corner_y);
     do {
-	map->tiles[x][y] = {false, true, " ", {255, 255, 255}};
+	map.tiles[x][y] = {false, true, " ", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
     x = this->x2;
     y = this->y2;
     TCODLine::init(this->corner_x, this->corner_y, x, y);
     do {
-	map->tiles[x][y] = {false, true, " ", {255, 255, 255}};
+	map.tiles[x][y] = {false, true, " ", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
 }
 
@@ -53,11 +53,11 @@ RectRoom::RectRoom(int x, int y, int xx, int yy, TCODBsp* node) {
     this->cy = static_cast<int>(std::round(y + yy) / 2);
 }
 
-void RectRoom::draw(GameMap* map) {
+void RectRoom::draw(GameMap& map) {
     printf("Drawing room: %d, %d to %d, %d", this->x, this->y, this->xx, this->yy);
     for (int i = this->y; i < this->yy; i++) {
 	for (int j = this->x; j < this->xx; j++) {
-	    map->tiles[j][i] = {false, true, " ", {255, 255, 255}};
+	    map.tiles[j][i] = {false, true, " ", {255, 255, 255}};
 	}
     }
     printf("Done\n");
@@ -172,9 +172,9 @@ void GameMap::wipe() {
 void GameMap::compute() {
     this->wipe();
     for (RectRoom& room : this->rooms) {
-	room.draw(this);	
+	room.draw(*this);
     }
     for (Hallway& hall : this->halls) {
-	hall.draw(this);
+	hall.draw(*this);
     }
 }
