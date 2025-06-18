@@ -43,6 +43,9 @@ void handle_events(tcod::Context& context) {
 			    player.move(-1, 1); break;
 			case SDL_SCANCODE_C:
 			    player.move(1, 1); break;
+			case SDL_SCANCODE_F8:
+			    printf("Recomputing world.");
+			    map.compute(); break;
 			default:
 			    break;
 		    } 

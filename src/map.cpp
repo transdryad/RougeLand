@@ -31,7 +31,7 @@ void Hallway::draw(GameMap* map) {
 }
 
 RectRoom GameMap::roomFromNode(TCODBsp* node) {
-    for (int i = 0; i < this->rooms.size(); i++) {
+    for (int i = 0; i < this->rooms.size(); ++i) {
 	while (node->level < this->rooms[i].node->level) {
 	    node = node->getLeft();
 	}
@@ -163,5 +163,8 @@ void GameMap::compute() {
     this->wipe();
     for (RectRoom& room : this->rooms) {
 	room.draw(this);	
+    }
+    for (Hallway& hall : this->halls) {
+	hall.draw(this);
     }
 }
