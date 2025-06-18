@@ -47,7 +47,7 @@ class Hallway{
 
 class GameMap{
     public:
-    	GameMap();
+	void init();
 	TCODBsp bsptree;
 	MapTile tiles[80][45];
 	void connect(TCODBsp* left, TCODBsp* right);

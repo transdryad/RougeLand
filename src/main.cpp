@@ -94,15 +94,16 @@ int main(const int argc, char* argv[]) {
 
     auto context = tcod::Context(params);
 
+	map.init();
+
     while (true) { // Always spawn the player in a room.
 	if (map.isWalkable(player.x, player.y)) {
 	    break;
-	} else {
-	    player.x += randomizer->getInt(-1, 1);
-	    player.y += randomizer->getInt(-1, 1);
-	    if (player.x >= 80) player.x = 80;
-	    if (player.y >= 45) player.y = 45;
 	}
+	player.x += randomizer->getInt(-1, 1);
+	player.y += randomizer->getInt(-1, 1);
+	if (player.x >= 80) player.x = 80;
+	if (player.y >= 45) player.y = 45;
     }
 
     logger->info("Entering main loop.");

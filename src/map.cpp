@@ -31,11 +31,14 @@ void Hallway::draw(GameMap* map) {
 }
 
 RectRoom GameMap::roomFromNode(TCODBsp* node) {
-    for (int i = 0; i < this->rooms.size(); ++i) {
-	while (node->level < this->rooms[i].node->level) {
-	    node = node->getLeft();
-	}
-	if (this->rooms[i].node == node) return this->rooms[i];
+    TCODBsp* originalNode = node;
+    for (auto & room : this->rooms) {
+        node = originalNode;
+	    while (node->level < room.node->level) {
+	        node = node->getLeft();
+	        if (node == nullptr) break;
+	    }
+	    if (room.node == node) return room;
     }
     exit(1);
 }
@@ -71,15 +74,21 @@ void GameMap::drawInBounds(int x, int y, int nx, int ny, TCODBsp* node) {
     int min_y = y;
     int max_x = nx;
     int max_y = ny;
-    int top_x = random->getInt(min_x + 1, max_x - 4);
-    int top_y = random->getInt(min_y + 1, max_y - 4);
+    int top_x = random->getInt(min_x + 1, abs(max_x - 4));
+    int top_y = random->getInt(min_y + 1, abs(max_y - 4));
     int bottom_x = top_x + random->getInt(3, 25, 24);
     int bottom_y = top_y + random->getInt(3, 25, 24);
     if (bottom_x >= max_x) bottom_x = max_x - 1;
     if (bottom_y >= max_y) bottom_y = max_y - 1;
     printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
-    if (bottom_x < top_x) exit(1);
-    if (bottom_y < top_y) exit(1);
+    if (bottom_x < top_x) {
+        printf("Bottom x %d is less than top %d, ie rand was %d.\n", bottom_x, top_x, bottom_x - top_x);
+        exit(1);
+    }
+    if (bottom_y < top_y) {
+        printf("Bottom y %d is less than top %d, ie rand was %d.\n", bottom_y, top_y, bottom_y - top_y);
+        exit(1);
+    }
     RectRoom room(top_x, top_y, bottom_x, bottom_y, node);
     this->rooms.push_back(room);
 }
@@ -122,15 +131,16 @@ public:
     }
 };
 
-GameMap::GameMap() {
+void GameMap::init() {
     this->wipe();
-     
+
     this->bsptree = TCODBsp(0, 0, 80, 45);
-    this->bsptree.splitRecursive(TCODRandom::getInstance(), 4, 3, 3, 1.5, 1.5);
+    this->bsptree.splitRecursive(TCODRandom::getInstance(), 4, 8, 8, 1.5, 1.5);
     this->bsptree.traversePostOrder(new NodeCallback(*this), nullptr);
 
     this->compute();
 }
+
 
 bool GameMap::isWalkable(int x, int y) const {
     return this->tiles[x][y].walkable;
