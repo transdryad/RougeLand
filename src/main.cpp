@@ -15,42 +15,44 @@
 auto logger = spdlog::basic_logger_mt("file", "log.txt");
 std::vector<std::reference_wrapper<Entity>> entities;
 GameMap map;
-Entity player(39, 21, "@", {255, 255, 255}, map);
+Entity player(39, 21, "@", {255, 255, 255}, false, 12, map);
 TCODRandom* randomizer = TCODRandom::getInstance();
 
 void handle_events(tcod::Context& context) {
     SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            context.convert_event_coordinates(event);
-            switch (event.type) {
-                case SDL_EVENT_QUIT:
-                    exit(0);
-		case SDL_EVENT_KEY_DOWN:
-		    switch (event.key.scancode) {
-			case SDL_SCANCODE_W:
-			    player.move(0, -1); break;
-			case SDL_SCANCODE_A:
-			    player.move(-1, 0); break;
-			case SDL_SCANCODE_S:
-			    player.move(0, 1); break;
-			case SDL_SCANCODE_D:
-			    player.move(1, 0); break;
-			case SDL_SCANCODE_Q:
-			    player.move(-1, -1); break;
-			case SDL_SCANCODE_E:
-			    player.move(1, -1); break;
-			case SDL_SCANCODE_Z:
-			    player.move(-1, 1); break;
-			case SDL_SCANCODE_C:
-			    player.move(1, 1); break;
-			case SDL_SCANCODE_F8:
-			    printf("Recomputing world.");
-			    map.compute(); break;
-			default:
-			    break;
-		    } 
+    while (!player.acted) {
+    SDL_PollEvent(&event);
+    context.convert_event_coordinates(event);
+    switch (event.type) {
+        case SDL_EVENT_QUIT:
+            exit(0); break;
+	case SDL_EVENT_KEY_DOWN:
+	    //printf("KeyPress");
+	    switch (event.key.scancode) {
+		case SDL_SCANCODE_W:
+		    player.move(0, -1); break;
+    		case SDL_SCANCODE_A:
+    		    player.move(-1, 0); break;
+    		case SDL_SCANCODE_S:
+    		    player.move(0, 1); break;
+    		case SDL_SCANCODE_D:
+    		    player.move(1, 0); break;
+    		case SDL_SCANCODE_Q:
+    		    player.move(-1, -1); break;
+	    	case SDL_SCANCODE_E:
+	    	    player.move(1, -1); break;
+	    	case SDL_SCANCODE_Z:
+	    	    player.move(-1, 1); break;
+	    	case SDL_SCANCODE_C:
+		    player.move(1, 1); break;
+		case SDL_SCANCODE_F8:
+		    printf("Recomputing world.");
+		    map.compute(); break;
+		default:
+		    break; 
 	    }
-	}
+    }
+    }
 }
 
 void render(tcod::Console& console, tcod::Context& context) {
@@ -65,21 +67,21 @@ void render(tcod::Console& console, tcod::Context& context) {
 int main(const int argc, char* argv[]) {
     try {
         //auto logger = spdlog::basic_logger_mt("file", "log.txt");
-        spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
+        //spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
     } catch (const spdlog::spdlog_ex &ex) {
         fmt::print(stderr, "Log init failed: {}\n", ex.what());
         return EXIT_FAILURE;
     }
-    logger->info("Welcome to RougeLand!");
-    logger->info("Initializing libTCOD.");
+    //logger->info("Welcome to RougeLand!");
+    //logger->info("Initializing libTCOD.");
 
     auto tileset = tcod::load_tilesheet("src/tileset.png", {16, 16}, tcod::CHARMAP_CP437);
     
-    logger->info("Loading Entities in vectors.");
+    //logger->info("Loading Entities in vectors.");
 
     entities.push_back(player);
-    Entity npc(30, 20, "@", {255, 255, 0}, map);
-    //entities.push_back(npc);
+    Entity npc(30, 20, "!", {0, 255, 0}, true, 10, map);
+    entities.push_back(npc);
 
     tcod::Console console = tcod::Console{80, 45};
     auto params = TCOD_ContextParams{};
@@ -94,22 +96,21 @@ int main(const int argc, char* argv[]) {
 
     auto context = tcod::Context(params);
 
-	map.init();
+    map.init();
 
-    while (true) { // Always spawn the player in a room.
-	if (map.isWalkable(player.x, player.y)) {
-	    break;
-	}
-	player.x += randomizer->getInt(-1, 1);
-	player.y += randomizer->getInt(-1, 1);
-	if (player.x >= 80) player.x = 80;
-	if (player.y >= 45) player.y = 45;
-    }
+    player.spawn();
+    npc.spawn();
 
-    logger->info("Entering main loop.");
+    //logger->info("Entering main loop.");
+
     while (true) {
-        render(console, context);
-        handle_events(context);
+	render(console, context);
+
+	handle_events(context); // Input event from player/os
+	
+	for (Entity& entity : entities) { // Do monster ai/check for death
+	    entity.update();
+	}
     }
 
 }
