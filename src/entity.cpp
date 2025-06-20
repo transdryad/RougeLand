@@ -15,16 +15,19 @@ Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool a
 
 void Entity::move(int dx, int dy) {
     if (!this->acted) {
-    if (this->map.isWalkable(this->x + dx, this->y + dy)) {
-        this->x += dx;
-	this->y += dy;
-    }
-    this->acted = true;
+	if (this->map.isWalkable(this->x + dx, this->y + dy)) {
+	    this->x += dx;
+	    this->y += dy;
+	}
+	this->acted = true;
     }
 }
 
 void Entity::render(tcod::Console& rconsole) {
-    tcod::print(rconsole, {this->x, this->y}, this->character, this->color, std::nullopt);
+    bool veiwable = this->map.fmap.isInFov(this->x, this->y);
+    if (veiwable) {
+	tcod::print(rconsole, {this->x, this->y}, this->character, this->color, std::nullopt);
+    }
 }
 
 void Entity::update() {

@@ -20,13 +20,13 @@ void Hallway::draw(GameMap& map) {
     int y = this->y1;
     TCODLine::init(x, y, this->corner_x, this->corner_y);
     do {
-	map.tiles[x][y] = {false, true, " ", {255, 255, 255}};
+	map.tiles[x][y] = {false, true, ".", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
     x = this->x2;
     y = this->y2;
     TCODLine::init(this->corner_x, this->corner_y, x, y);
     do {
-	map.tiles[x][y] = {false, true, " ", {255, 255, 255}};
+	map.tiles[x][y] = {false, true, ".", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
 }
 
@@ -57,7 +57,7 @@ void RectRoom::draw(GameMap& map) {
     printf("Drawing room: %d, %d to %d, %d", this->x, this->y, this->xx, this->yy);
     for (int i = this->y; i < this->yy; i++) {
 	for (int j = this->x; j < this->xx; j++) {
-	    map.tiles[j][i] = {false, true, " ", {255, 255, 255}};
+	    map.tiles[j][i] = {false, true, ".", {255, 255, 255}};
 	}
     }
     printf("Done\n");
@@ -153,12 +153,14 @@ bool GameMap::isSolid(int x, int y) const {
 void GameMap::render(tcod::Console& rconsole) {
     for (int y = 0; y < 45; y++) {
         for (int x = 0; x < 80; x++) {
-            tcod::print(rconsole, {x, y}, this->tiles[x][y].character, this->tiles[x][y].color, std::nullopt);
-            //printf(this->tiles[x][y].character.c_str());
+	    bool veiwed = this->fmap.isInFov(x, y);
+	    if (veiwed) {
+		tcod::print(rconsole, {x, y}, this->tiles[x][y].character, this->tiles[x][y].color, std::nullopt);
+	    } else {
+		tcod::print(rconsole, {x, y}, " ", {{255, 255, 255}}, std::nullopt);
+	    }
         }
-        //printf("%d\n", y);
     }
-    //printf("\n");
 }
 
 void GameMap::wipe() {
@@ -177,4 +179,14 @@ void GameMap::compute() {
     for (Hallway& hall : this->halls) {
 	hall.draw(*this);
     }
+    for (int y = 0; y < 45; y++) {
+	for (int x = 0; x < 80; x++) {
+	    MapTile& tile = this->tiles[x][y];
+	    this->fmap.setProperties(x, y, !tile.solid, tile.walkable);
+	}
+    }
+}
+
+GameMap::GameMap() : fmap(80, 45) {
+    return;
 }

@@ -15,7 +15,7 @@
 auto logger = spdlog::basic_logger_mt("file", "log.txt");
 std::vector<std::reference_wrapper<Entity>> entities;
 GameMap map;
-Entity player(39, 21, "@", {255, 255, 255}, false, 12, map);
+Entity player(39, 21, "@", {210, 210, 255}, false, 12, map);
 TCODRandom* randomizer = TCODRandom::getInstance();
 
 void handle_events(tcod::Context& context) {
@@ -101,12 +101,16 @@ int main(const int argc, char* argv[]) {
     player.spawn();
     npc.spawn();
 
+    map.fmap.computeFov(player.x, player.y, 10);
+
     //logger->info("Entering main loop.");
 
     while (true) {
 	render(console, context);
 
 	handle_events(context); // Input event from player/os
+	
+	map.fmap.computeFov(player.x, player.y, 10);
 	
 	for (Entity& entity : entities) { // Do monster ai/check for death
 	    entity.update();

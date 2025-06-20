@@ -47,8 +47,10 @@ class Hallway{
 
 class GameMap{
     public:
+	GameMap();
 	void init();
 	TCODBsp bsptree;
+	TCODMap fmap;
 	MapTile tiles[80][45];
 	void connect(TCODBsp* left, TCODBsp* right);
 	std::vector<RectRoom> rooms;
