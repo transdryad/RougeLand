@@ -20,13 +20,13 @@ void Hallway::draw(GameMap& map) {
     int y = this->y1;
     TCODLine::init(x, y, this->corner_x, this->corner_y);
     do {
-	map.tiles[x][y] = {false, true, ".", {255, 255, 255}};
+	map.tiles[x][y] = {false, true, false, ".", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
     x = this->x2;
     y = this->y2;
     TCODLine::init(this->corner_x, this->corner_y, x, y);
     do {
-	map.tiles[x][y] = {false, true, ".", {255, 255, 255}};
+	map.tiles[x][y] = {false, true, false, ".", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
 }
 
@@ -57,7 +57,7 @@ void RectRoom::draw(GameMap& map) {
     printf("Drawing room: %d, %d to %d, %d", this->x, this->y, this->xx, this->yy);
     for (int i = this->y; i < this->yy; i++) {
 	for (int j = this->x; j < this->xx; j++) {
-	    map.tiles[j][i] = {false, true, ".", {255, 255, 255}};
+	    map.tiles[j][i] = {false, true, false, ".", {255, 255, 255}};
 	}
     }
     printf("Done\n");
@@ -156,6 +156,9 @@ void GameMap::render(tcod::Console& rconsole) {
 	    bool veiwed = this->fmap.isInFov(x, y);
 	    if (veiwed) {
 		tcod::print(rconsole, {x, y}, this->tiles[x][y].character, this->tiles[x][y].color, std::nullopt);
+		this->tiles[x][y].explored = true;
+	    } else if (this->tiles[x][y].explored) {
+		tcod::print(rconsole, {x, y}, this->tiles[x][y].character, {{75, 75, 75}}, std::nullopt);
 	    } else {
 		tcod::print(rconsole, {x, y}, " ", {{255, 255, 255}}, std::nullopt);
 	    }
@@ -166,7 +169,7 @@ void GameMap::render(tcod::Console& rconsole) {
 void GameMap::wipe() {
     for (int y = 0; y < 45; y++) {
 	for (auto & tile : this->tiles) {
-	    tile[y] = {true, false, "#", {255, 255, 255}};
+	    tile[y] = {true, false, false, "#", {255, 255, 255}};
 	}
     }
 }

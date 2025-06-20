@@ -9,6 +9,7 @@
 struct MapTile{
     bool solid;
     bool walkable;
+    bool explored;
     std::string character;
     tcod::ColorRGB color;
 };
