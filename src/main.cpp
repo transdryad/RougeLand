@@ -14,7 +14,7 @@
 
 auto logger = spdlog::basic_logger_mt("file", "log.txt");
 std::vector<std::reference_wrapper<Entity>> entities;
-GameMap map;
+GameMap map(entities);
 Entity player(39, 21, "@", {210, 210, 255}, false, 12, map);
 TCODRandom* randomizer = TCODRandom::getInstance();
 
@@ -113,7 +113,9 @@ int main(const int argc, char* argv[]) {
 	map.fmap.computeFov(player.x, player.y, 10);
 	
 	for (Entity& entity : entities) { // Do monster ai/check for death
-	    entity.update();
+	    if (map.fmap.isInFov(entity.x, entity.y)) {
+		entity.update();
+	    }
 	}
     }
 

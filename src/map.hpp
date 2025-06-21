@@ -5,6 +5,10 @@
 #include <random>
 #include <vector>
 #include <functional>
+#include <vector>
+#include "entity.hpp"
+
+class Entity;
 
 struct MapTile{
     bool solid;
@@ -48,10 +52,11 @@ class Hallway{
 
 class GameMap{
     public:
-	GameMap();
+	GameMap(std::vector<std::reference_wrapper<Entity>>& entities);
 	void init();
 	TCODBsp bsptree;
 	TCODMap fmap;
+	std::vector<std::reference_wrapper<Entity>>& entities;
 	MapTile tiles[80][45];
 	void connect(TCODBsp* left, TCODBsp* right);
 	std::vector<RectRoom> rooms;

@@ -35,10 +35,16 @@ void Entity::update() {
 	this->living = false;
 	this->color = {255, 0, 0};
     } else if (this->ai) {
-	TCODRandom* random = TCODRandom::getInstance();
-	int dx = random->getInt(-1, 1);
-	int dy = random->getInt(-1, 1);
-	this->move(dx, dy);
+	TCODPath* path = new TCODPath(&this->map.fmap);
+	if (this->x == this->map.entities[0].get().x && this->y == this->map.entities[0].get().y) {
+	    
+	} else {
+	path->compute(this->x, this->y, this->map.entities[0].get().x, this->map.entities[0].get().y); //entities[0] is always the player
+	int x;
+	int y;
+	path->walk(&x, &y, true);
+	this->move(x - this->x, y - this->y);
+	}
     }
     this->acted = false;
 }

@@ -4,6 +4,8 @@
 #include "libtcod.hpp"
 #include "map.hpp"
 
+class GameMap;
+
 class Entity {
     public:
 	int x;

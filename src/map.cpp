@@ -5,6 +5,7 @@
 #include <fmt/base.h>
 #include <cstdlib>
 #include <cmath>
+#include "entity.hpp"
 
 Hallway::Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y) {
     this->x1 = x1;
@@ -190,6 +191,6 @@ void GameMap::compute() {
     }
 }
 
-GameMap::GameMap() : fmap(80, 45) {
+GameMap::GameMap(std::vector<std::reference_wrapper<Entity>>& entities) : fmap(80, 45), entities(entities) {
     return;
 }
