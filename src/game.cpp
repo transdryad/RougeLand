@@ -65,7 +65,7 @@ void Game::spawn(const std::string& character, tcod::ColorRGB color, bool ai, in
     TCODRandom* random = TCODRandom::getInstance();
     int x = random->getInt(0, 80);
     int y = random->getInt(0, 45);
-    entities.emplace_back(x, y, character, color, ai, maxHp, player, map);
+    entities.emplace_back(x, y, character, color, ai, maxHp, player, 20, map);
     entities.back().spawn();
 }
 
@@ -107,7 +107,7 @@ Game::Game(const int argc, char* argv[]): map(entities) {
         render();
         handle_events(); // Input event from player/os
         map.fmap.computeFov(entities[0].x, entities[0].y, 10);
-        if (randomizer->getFloat(0, 1) > 0.05) {
+        if (randomizer->getFloat(0, 1) > 0.01) {
             spawn("o", {0, 200, 0}, true, 10, false);
         }
         for (Entity& entity : entities) { // Do monster ai/check for death

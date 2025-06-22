@@ -3,7 +3,7 @@
 #include <string>
 #include "map.hpp"
 
-Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, GameMap& map): map(map) {
+Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, GameMap& map): map(map) {
     this->x = x;
     this->y = y;
     this->ai = ai;
@@ -13,6 +13,8 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
     this->color = color;
     this->maxHp = maxHp;
     this->hp = maxHp;
+    this->xpval = xpval;
+    this->xp = 0;
     this->living = true;
     this->acted = false;
 }
@@ -36,6 +38,10 @@ void Entity::move(const int dx, const int dy) {
                     if (e.living) {
                         occupied = true;
                         e.damage(attack);
+                        if (e.living) {
+                            xp = xp + e.xpval;
+                            e.xpval = 0;
+                        }
                     }
                 }
             }
@@ -56,7 +62,7 @@ void Entity::render(tcod::Console& rconsole) {
 
 void Entity::update() {
     if (!living && player) {
-        printf("You Died!");
+        printf("You died with %d xp!", xp);
         map.wipe();
         exit(0);
     }
