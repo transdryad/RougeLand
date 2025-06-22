@@ -6,6 +6,10 @@
 
 class GameMap;
 
+enum EntityType {
+    PLAYER, ORC, GOBLIN
+};
+
 class Entity {
     public:
         int x;

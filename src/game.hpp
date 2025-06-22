@@ -4,7 +4,6 @@
 #include "spdlog/spdlog.h"
 #include <vector>
 #include "entity.hpp"
-#include <string>
 #include "map.hpp"
 
 
@@ -20,6 +19,6 @@ class Game {
         [[noreturn]] void run();
         void handle_events();
         void render();
-        void spawn(const std::string& character, tcod::ColorRGB color, bool ai, int maxHp, bool player);
+        void spawn(EntityType etype);
         Game(int argc, char* argv[]);
 };
