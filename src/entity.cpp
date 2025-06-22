@@ -11,6 +11,8 @@ Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool a
     this->color = color;
     this->maxHp = maxHp;
     this->hp = maxHp;
+	this->living = true;
+	this->acted = false;
 }
 
 void Entity::move(int dx, int dy) {
@@ -35,16 +37,14 @@ void Entity::update() {
 	this->living = false;
 	this->color = {255, 0, 0};
     } else if (this->ai) {
-	TCODPath* path = new TCODPath(&this->map.fmap);
-	if (this->x == this->map.entities[0].get().x && this->y == this->map.entities[0].get().y) {
-	    
-	} else {
-	path->compute(this->x, this->y, this->map.entities[0].get().x, this->map.entities[0].get().y); //entities[0] is always the player
-	int x;
-	int y;
-	path->walk(&x, &y, true);
-	this->move(x - this->x, y - this->y);
-	}
+	auto* path = new TCODPath(&this->map.fmap);
+    	if (!(this->x == this->map.entities[0].get().x && this->y == this->map.entities[0].get().y)) {
+    	    path->compute(this->x, this->y, this->map.entities[0].get().x, this->map.entities[0].get().y); //entities[0] is the player
+	    int x;
+    	    int y;
+    	    path->walk(&x, &y, true);
+    	    this->move(x - this->x, y - this->y);
+    	}
     }
     this->acted = false;
 }
