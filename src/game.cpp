@@ -61,11 +61,11 @@ void Game::render() {
     context.present(console);
 }
 
-void Game::spawn(std::string character, tcod::ColorRGB color, bool ai, int maxHp) {
+void Game::spawn(std::string character, tcod::ColorRGB color, bool ai, int maxHp, bool player) {
     TCODRandom* random = TCODRandom::getInstance();
     int x = random->getInt(0, 80);
     int y = random->getInt(0, 45);
-    entities.emplace_back(x, y, character, color, ai, maxHp, map);
+    entities.emplace_back(x, y, character, color, ai, maxHp, player, map);
     entities.back().spawn();
 }
 
@@ -83,8 +83,8 @@ Game::Game(const int argc, char* argv[]): map(entities) {
 
     map.init();
 
-    spawn("@", {210, 210, 255}, false, 12); //player
-    spawn("o", {0, 200, 0}, true, 10);
+    spawn("@", {210, 210, 255}, false, 12, true); //player
+    spawn("o", {0, 200, 0}, true, 10, false);
 
     console = tcod::Console{80, 45};
     auto params = TCOD_ContextParams{};
@@ -105,6 +105,9 @@ Game::Game(const int argc, char* argv[]): map(entities) {
         render();
         handle_events(); // Input event from player/os
         map.fmap.computeFov(entities[0].x, entities[0].y, 10);
+        if (randomizer->getFloat(0, 1) > 0.05) {
+            spawn("o", {0, 200, 0}, true, 10, false);
+        }
         for (Entity& entity : entities) { // Do monster ai/check for death
             if (map.fmap.isInFov(entity.x, entity.y)) {
                 entity.update();

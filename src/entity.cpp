@@ -3,10 +3,12 @@
 #include <string>
 #include "map.hpp"
 
-Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool ai, int maxHp, GameMap& map): map(map) {
+Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool ai, int maxHp, bool player, GameMap& map): map(map) {
     this->x = x;
     this->y = y;
     this->ai = ai;
+    this->attack = 1;
+    this->player = player;
     this->character = character;
     this->color = color;
     this->maxHp = maxHp;
@@ -15,11 +17,32 @@ Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool a
     this->acted = false;
 }
 
+void Entity::damage(int damage) {
+    hp -= damage;
+    if (hp <= 0) {
+        living = false;
+        ai = false;
+        color = {255, 0, 0};
+    }
+}
+
+
 void Entity::move(int dx, int dy) {
     if (!acted) {
         if (map.isWalkable(x + dx, y + dy)) {
-            x += dx;
-            y += dy;
+            bool occupied = false;
+            for (Entity& e : map.entities) {
+                if (e.x == x + dx && e.y == y + dy) {
+                    if (e.living) {
+                        occupied = true;
+                        e.damage(attack);
+                    }
+                }
+            }
+            if (!occupied) {
+                x += dx;
+                y += dy;
+            }
         }
         acted = true;
     }
@@ -32,10 +55,12 @@ void Entity::render(tcod::Console& rconsole) {
 }
 
 void Entity::update() {
-    if (hp <= 0) {
-        living = false;
-        color = {255, 0, 0};
-    } else if (ai) {
+    if (!living && player) {
+        printf("You Died!");
+        map.wipe();
+        exit(0);
+    }
+    if (ai) {
         auto* path = new TCODPath(&map.fmap);
         if (!(x == map.entities[0].x && y == map.entities[0].y)) {
             path->compute(x, y, map.entities[0].x, map.entities[0].y); //entities[0] is the player
