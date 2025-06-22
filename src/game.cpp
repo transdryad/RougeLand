@@ -61,7 +61,6 @@ void Game::render() {
     context.present(console);
 }
 
-
 Game::Game(const int argc, char* argv[]): map(entities), player(39, 21, "@", {210, 210, 255}, false, 12, map) {
     try {
         logger = spdlog::basic_logger_mt("file", "log.txt");
@@ -75,7 +74,7 @@ Game::Game(const int argc, char* argv[]): map(entities), player(39, 21, "@", {21
     logger->info("Initializing libTCOD.");
 
     entities.push_back(player);
-    Entity npc(30, 20, "!", {0, 255, 0}, true, 10, map);
+    Entity npc(30, 20, "o", {0, 200, 0}, true, 10, map);
     entities.push_back(npc);
 
     console = tcod::Console{80, 45};

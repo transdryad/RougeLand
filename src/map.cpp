@@ -22,7 +22,7 @@ void Hallway::draw(GameMap& map) {
     TCODLine::init(x, y, corner_x, corner_y);
 
     do {
-	    map.tiles[x][y] = {false, true, false, ".", {255, 255, 255}};
+        map.tiles[x][y] = {false, true, false, ".", {255, 255, 255}};
     } while (!TCODLine::step(&x, &y));
 
     x = x2;
@@ -38,11 +38,11 @@ RectRoom GameMap::roomFromNode(TCODBsp* node) {
     TCODBsp* originalNode = node;
     for (auto & room : rooms) {
         node = originalNode;
-	    while (node->level < room.node->level) {
-	        node = node->getLeft();
-	        if (node == nullptr) break;
-	    }
-	    if (room.node == node) return room;
+        while (node->level < room.node->level) {
+            node = node->getLeft();
+            if (node == nullptr) break;
+        }
+        if (room.node == node) return room;
     }
     exit(1);
 }
@@ -60,9 +60,9 @@ RectRoom::RectRoom(int x, int y, int xx, int yy, TCODBsp* node) {
 void RectRoom::draw(GameMap& map) {
     printf("Drawing room: %d, %d to %d, %d", x,y, xx, yy);
     for (int i = y; i < yy; i++) {
-	    for (int j = x; j < xx; j++) {
-	        map.tiles[j][i] = {false, true, false, ".", {255, 255, 255}};
-	    }
+        for (int j = x; j < xx; j++) {
+            map.tiles[j][i] = {false, true, false, ".", {255, 255, 255}};
+        }
     }
     printf("Done\n");
 }
@@ -103,32 +103,32 @@ void GameMap::connect(TCODBsp* left, TCODBsp* right) { // Partially from RogueLi
     int corner_x;
     int corner_y;
     if (TCODRandom::getInstance()->getFloat(0, 1) < 0.5) {
-	    corner_x = x2;
-	    corner_y = y1;
+        corner_x = x2;
+        corner_y = y1;
     } else {
-	    corner_x = x1;
-	    corner_y = y2;
+        corner_x = x1;
+        corner_y = y2;
     }
     Hallway hall(x1, x2, y1, y2, corner_x, corner_y);
     halls.push_back(hall);
 }
 
 class NodeCallback final : public ITCODBspCallback {
-public:
-    GameMap& mapref;
-    NodeCallback(GameMap& map): mapref(map) {}
+    public:
+        GameMap& mapref;
+        NodeCallback(GameMap& map): mapref(map) {}
 
-    bool visitNode(TCODBsp *node, void *userData) override {
-        if (!node->isLeaf()) {
-	        TCODBsp* left = node->getLeft();
-	        TCODBsp* right = node->getRight();
-	        mapref.connect(left, right);
+        bool visitNode(TCODBsp *node, void *userData) override {
+            if (!node->isLeaf()) {
+                TCODBsp* left = node->getLeft();
+                TCODBsp* right = node->getRight();
+                mapref.connect(left, right);
+                return true;
+            }
+            printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
+            mapref.drawInBounds(node->x,node->y,node->w + node->x, node->h + node->y, node);
             return true;
         }
-        printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
-        mapref.drawInBounds(node->x,node->y,node->w + node->x, node->h + node->y, node);
-	    return true;
-    }
 };
 
 void GameMap::init() {
@@ -155,13 +155,13 @@ void GameMap::render(tcod::Console& rconsole) {
         for (int x = 0; x < 80; x++) {
             //printf("%s", tiles[x][y].character.c_str());
             if (fmap.isInFov(x, y)) {
-		        tcod::print(rconsole, {x, y}, tiles[x][y].character, tiles[x][y].color, std::nullopt);
-		        tiles[x][y].explored = true;
-	        } else if (this->tiles[x][y].explored) {
-		        tcod::print(rconsole, {x, y}, tiles[x][y].character, {{75, 75, 75}}, std::nullopt);
-	        } else {
-		        tcod::print(rconsole, {x, y}, " ", {{255, 255, 255}}, std::nullopt);
-	        }
+                tcod::print(rconsole, {x, y}, tiles[x][y].character, tiles[x][y].color, std::nullopt);
+                tiles[x][y].explored = true;
+            } else if (this->tiles[x][y].explored) {
+                tcod::print(rconsole, {x, y}, tiles[x][y].character, {{75, 75, 75}}, std::nullopt);
+            } else {
+                tcod::print(rconsole, {x, y}, " ", {{255, 255, 255}}, std::nullopt);
+            }
         }
         //printf("\n");
     }
@@ -170,25 +170,25 @@ void GameMap::render(tcod::Console& rconsole) {
 
 void GameMap::wipe() {
     for (int y = 0; y < 45; y++) {
-	    for (auto & tile : tiles) {
-	        tile[y] = {true, false, false, "#", {255, 255, 255}};
-	    }
+        for (auto & tile : tiles) {
+            tile[y] = {true, false, false, "#", {255, 255, 255}};
+        }
     }
 }
 
 void GameMap::compute() {
     this->wipe();
     for (RectRoom& room : rooms) {
-	    room.draw(*this);
+        room.draw(*this);
     }
     for (Hallway& hall : halls) {
-	    hall.draw(*this);
+        hall.draw(*this);
     }
     for (int y = 0; y < 45; y++) {
-	    for (int x = 0; x < 80; x++) {
-	        MapTile& tile = tiles[x][y];
-	        fmap.setProperties(x, y, !tile.solid, tile.walkable);
-	    }
+        for (int x = 0; x < 80; x++) {
+            MapTile& tile = tiles[x][y];
+            fmap.setProperties(x, y, !tile.solid, tile.walkable);
+        }
     }
 }
 
