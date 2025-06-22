@@ -1,0 +1,112 @@
+#include "game.hpp"
+
+#include "libtcod.hpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include <string>
+#include <fmt/core.h>
+#include <cstdio>
+#include <cstdlib>
+#include <vector>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include "entity.hpp"
+#include <functional>
+#include "map.hpp"
+
+void Game::handle_events() {
+    //printf("Player.acted = %s.\n", player.acted ? "true" : "false");
+    while (!player.acted) {
+        SDL_Event event;
+        SDL_PollEvent(&event);
+        context.convert_event_coordinates(event);
+        switch (event.type) {
+            case SDL_EVENT_QUIT:
+                exit(0);
+            case SDL_EVENT_KEY_DOWN:
+                //printf("KeyPress\n");
+                switch (event.key.scancode) {
+                    case SDL_SCANCODE_W:
+                        player.move(0, -1); break;
+                    case SDL_SCANCODE_A:
+                        player.move(-1, 0); break;
+                    case SDL_SCANCODE_S:
+                        player.move(0, 1); break;
+                    case SDL_SCANCODE_D:
+                        player.move(1, 0); break;
+                    case SDL_SCANCODE_Q:
+                        player.move(-1, -1); break;
+                    case SDL_SCANCODE_E:
+                        player.move(1, -1); break;
+                    case SDL_SCANCODE_Z:
+                        player.move(-1, 1); break;
+                    case SDL_SCANCODE_C:
+                        player.move(1, 1); break;
+                    case SDL_SCANCODE_F8:
+                        printf("Recomputing world.");
+                        map.compute(); break;
+                    default: break;
+                }
+            default: break;
+        }
+    }
+}
+
+void Game::render() {
+    console.clear();
+    map.render(console);
+    for (Entity& entity : entities) {
+        entity.render(console);
+    }
+    context.present(console);
+}
+
+
+Game::Game(const int argc, char* argv[]): map(entities), player(39, 21, "@", {210, 210, 255}, false, 12, map) {
+    try {
+        logger = spdlog::basic_logger_mt("file", "log.txt");
+        spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
+    } catch (const spdlog::spdlog_ex &ex) {
+        fmt::print(stderr, "Log init failed: {}\n", ex.what());
+        exit(EXIT_FAILURE);
+    }
+
+    logger->info("Welcome to RougeLand!");
+    logger->info("Initializing libTCOD.");
+
+    entities.push_back(player);
+    Entity npc(30, 20, "!", {0, 255, 0}, true, 10, map);
+    entities.push_back(npc);
+
+    console = tcod::Console{80, 45};
+    auto params = TCOD_ContextParams{};
+
+    params.console = console.get();
+    params.window_title = "RougeLand";
+    params.sdl_window_flags = SDL_WINDOW_RESIZABLE;
+    params.vsync = true;
+    params.argc = argc;
+    params.argv = argv;
+    params.tileset = tileset.get();
+
+    context = tcod::Context(params);
+
+    map.init();
+
+    for (Entity& e : entities) {
+        e.spawn();
+    }
+
+    map.fmap.computeFov(player.x, player.y, 10);
+
+    while (true) {
+        render();
+        handle_events(); // Input event from player/os
+        map.fmap.computeFov(player.x, player.y, 10);
+        for (Entity& entity : entities) { // Do monster ai/check for death
+            if (map.fmap.isInFov(entity.x, entity.y)) {
+                entity.update();
+            }
+        }
+    }
+}

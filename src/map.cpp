@@ -2,7 +2,7 @@
 
 #include "libtcod.hpp"
 #include <random>
-#include <fmt/base.h>
+#include <fmt/core.h>
 #include <cstdlib>
 #include <cmath>
 #include "entity.hpp"
@@ -62,10 +62,6 @@ void RectRoom::draw(GameMap& map) {
 	}
     }
     printf("Done\n");
-}
-
-int GameMap::distance(int x, int y, int tx, int ty) {
-    return abs(tx - x) + abs(ty - y);
 }
 
 void GameMap::drawInBounds(int x, int y, int nx, int ny, TCODBsp* node) {
@@ -154,8 +150,8 @@ bool GameMap::isSolid(int x, int y) const {
 void GameMap::render(tcod::Console& rconsole) {
     for (int y = 0; y < 45; y++) {
         for (int x = 0; x < 80; x++) {
-	    bool veiwed = this->fmap.isInFov(x, y);
-	    if (veiwed) {
+        printf("%s", tiles[x][y].character.c_str());
+        if (this->fmap.isInFov(x, y)) {
 		tcod::print(rconsole, {x, y}, this->tiles[x][y].character, this->tiles[x][y].color, std::nullopt);
 		this->tiles[x][y].explored = true;
 	    } else if (this->tiles[x][y].explored) {
@@ -164,7 +160,9 @@ void GameMap::render(tcod::Console& rconsole) {
 		tcod::print(rconsole, {x, y}, " ", {{255, 255, 255}}, std::nullopt);
 	    }
         }
+        printf("\n");
     }
+    printf("\n");
 }
 
 void GameMap::wipe() {

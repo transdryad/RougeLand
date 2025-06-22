@@ -67,6 +67,5 @@ class GameMap{
 	void compute();
 	void drawInBounds(int x, int y, int nx, int ny, TCODBsp* node);
 	void wipe();
-	int distance(int x, int y, int tx, int ty);
 	RectRoom roomFromNode(TCODBsp* node);
 };

@@ -26,8 +26,7 @@ void Entity::move(int dx, int dy) {
 }
 
 void Entity::render(tcod::Console& rconsole) {
-    bool veiwable = this->map.fmap.isInFov(this->x, this->y);
-    if (veiwable) {
+	if (this->map.fmap.isInFov(this->x, this->y)) {
 	tcod::print(rconsole, {this->x, this->y}, this->character, this->color, std::nullopt);
     }
 }
