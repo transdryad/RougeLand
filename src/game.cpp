@@ -16,7 +16,7 @@
 
 void Game::handle_events() {
     //printf("Player.acted = %s.\n", player.acted ? "true" : "false");
-    while (!player.acted) {
+    while (!entities[0].acted) {
         SDL_Event event;
         SDL_PollEvent(&event);
         context.convert_event_coordinates(event);
@@ -27,21 +27,21 @@ void Game::handle_events() {
                 //printf("KeyPress\n");
                 switch (event.key.scancode) {
                     case SDL_SCANCODE_W:
-                        player.move(0, -1); break;
+                        entities[0].move(0, -1); break;
                     case SDL_SCANCODE_A:
-                        player.move(-1, 0); break;
+                        entities[0].move(-1, 0); break;
                     case SDL_SCANCODE_S:
-                        player.move(0, 1); break;
+                        entities[0].move(0, 1); break;
                     case SDL_SCANCODE_D:
-                        player.move(1, 0); break;
+                        entities[0].move(1, 0); break;
                     case SDL_SCANCODE_Q:
-                        player.move(-1, -1); break;
+                        entities[0].move(-1, -1); break;
                     case SDL_SCANCODE_E:
-                        player.move(1, -1); break;
+                        entities[0].move(1, -1); break;
                     case SDL_SCANCODE_Z:
-                        player.move(-1, 1); break;
+                        entities[0].move(-1, 1); break;
                     case SDL_SCANCODE_C:
-                        player.move(1, 1); break;
+                        entities[0].move(1, 1); break;
                     case SDL_SCANCODE_F8:
                         printf("Recomputing world.");
                         map.compute(); break;
@@ -61,7 +61,15 @@ void Game::render() {
     context.present(console);
 }
 
-Game::Game(const int argc, char* argv[]): map(entities), player(39, 21, "@", {210, 210, 255}, false, 12, map) {
+void Game::spawn(std::string character, tcod::ColorRGB color, bool ai, int maxHp) {
+    TCODRandom* random = TCODRandom::getInstance();
+    int x = random->getInt(0, 80);
+    int y = random->getInt(0, 45);
+    entities.emplace_back(x, y, character, color, ai, maxHp, map);
+    entities.back().spawn();
+}
+
+Game::Game(const int argc, char* argv[]): map(entities) {
     try {
         logger = spdlog::basic_logger_mt("file", "log.txt");
         spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
@@ -73,9 +81,10 @@ Game::Game(const int argc, char* argv[]): map(entities), player(39, 21, "@", {21
     logger->info("Welcome to RougeLand!");
     logger->info("Initializing libTCOD.");
 
-    entities.push_back(player);
-    Entity npc(30, 20, "o", {0, 200, 0}, true, 10, map);
-    entities.push_back(npc);
+    map.init();
+
+    spawn("@", {210, 210, 255}, false, 12); //player
+    spawn("o", {0, 200, 0}, true, 10);
 
     console = tcod::Console{80, 45};
     auto params = TCOD_ContextParams{};
@@ -90,18 +99,12 @@ Game::Game(const int argc, char* argv[]): map(entities), player(39, 21, "@", {21
 
     context = tcod::Context(params);
 
-    map.init();
-
-    for (Entity& e : entities) {
-        e.spawn();
-    }
-
-    map.fmap.computeFov(player.x, player.y, 10);
+    map.fmap.computeFov(entities[0].x, entities[0].y, 10);
 
     while (true) {
         render();
         handle_events(); // Input event from player/os
-        map.fmap.computeFov(player.x, player.y, 10);
+        map.fmap.computeFov(entities[0].x, entities[0].y, 10);
         for (Entity& entity : entities) { // Do monster ai/check for death
             if (map.fmap.isInFov(entity.x, entity.y)) {
                 entity.update();

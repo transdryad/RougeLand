@@ -37,8 +37,8 @@ void Entity::update() {
         color = {255, 0, 0};
     } else if (ai) {
         auto* path = new TCODPath(&map.fmap);
-        if (!(x == map.entities[0].get().x && y == map.entities[0].get().y)) {
-            path->compute(x, y, map.entities[0].get().x, map.entities[0].get().y); //entities[0] is the player
+        if (!(x == map.entities[0].x && y == map.entities[0].y)) {
+            path->compute(x, y, map.entities[0].x, map.entities[0].y); //entities[0] is the player
             int x;
             int y;
             path->walk(&x, &y, true);

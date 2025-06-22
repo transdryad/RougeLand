@@ -192,6 +192,6 @@ void GameMap::compute() {
     }
 }
 
-GameMap::GameMap(std::vector<std::reference_wrapper<Entity>>& entities) : fmap(80, 45), entities(entities) {
+GameMap::GameMap(std::vector<Entity>& entities) : fmap(80, 45), entities(entities) {
     return;
 }

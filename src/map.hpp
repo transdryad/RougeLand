@@ -52,11 +52,12 @@ class Hallway{
 
 class GameMap{
     public:
-        GameMap(std::vector<std::reference_wrapper<Entity>>& entities);
+        GameMap(std::vector<Entity>& entities);
+
         void init();
         TCODBsp bsptree;
         TCODMap fmap;
-        std::vector<std::reference_wrapper<Entity>>& entities;
+        std::vector<Entity>& entities;
         MapTile tiles[80][45];
         void connect(TCODBsp* left, TCODBsp* right);
         std::vector<RectRoom> rooms;
