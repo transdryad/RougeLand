@@ -16,44 +16,44 @@ Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool a
 }
 
 void Entity::move(int dx, int dy) {
-    if (!this->acted) {
-	if (this->map.isWalkable(this->x + dx, this->y + dy)) {
-	    this->x += dx;
-	    this->y += dy;
-	}
-	this->acted = true;
+    if (!acted) {
+		if (map.isWalkable(x + dx, y + dy)) {
+		    x += dx;
+		    y += dy;
+		}
+	acted = true;
     }
 }
 
 void Entity::render(tcod::Console& rconsole) {
-	if (this->map.fmap.isInFov(this->x, this->y)) {
-	tcod::print(rconsole, {this->x, this->y}, this->character, this->color, std::nullopt);
+	if (map.fmap.isInFov(x, y)) {
+		tcod::print(rconsole, {x, y}, character, color, std::nullopt);
     }
 }
 
 void Entity::update() {
-    if (this->hp <= 0) {
-	this->living = false;
-	this->color = {255, 0, 0};
-    } else if (this->ai) {
-	auto* path = new TCODPath(&this->map.fmap);
-    	if (!(this->x == this->map.entities[0].get().x && this->y == this->map.entities[0].get().y)) {
-    	    path->compute(this->x, this->y, this->map.entities[0].get().x, this->map.entities[0].get().y); //entities[0] is the player
-	    int x;
-    	    int y;
+    if (hp <= 0) {
+		living = false;
+		color = {255, 0, 0};
+    } else if (ai) {
+		auto* path = new TCODPath(&map.fmap);
+    	if (!(x == map.entities[0].get().x && y == map.entities[0].get().y)) {
+    		path->compute(x, y, map.entities[0].get().x, map.entities[0].get().y); //entities[0] is the player
+    		int x;
+    		int y;
     	    path->walk(&x, &y, true);
     	    this->move(x - this->x, y - this->y);
     	}
     }
-    this->acted = false;
+    acted = false;
 }
 
 void Entity::spawn() {
     TCODRandom* randomizer = TCODRandom::getInstance();
-    while (!this->map.isWalkable(this->x, this->y)) {
-	this->x += randomizer->getInt(-1, 1);
-	this->y += randomizer->getInt(-1, 1);
-	if (this->x >= 80) this->x = 80;
-	if (this->y >= 45) this->y = 45;
+    while (!map.isWalkable(x, y)) {
+		x += randomizer->getInt(-1, 1);
+		y += randomizer->getInt(-1, 1);
+		if (x >= 80) x = 80;
+		if (y >= 45) y = 45;
     }
 }
