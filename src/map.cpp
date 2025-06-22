@@ -7,7 +7,7 @@
 #include <cmath>
 #include "entity.hpp"
 
-Hallway::Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y) {
+Hallway::Hallway(const int x1, const int x2, const int y1, const int y2, const int corner_x, const int corner_y) {
     this->x1 = x1;
     this->x2 = x2;
     this->y1 = y1;
@@ -16,7 +16,7 @@ Hallway::Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y) {
     this->corner_y = corner_y;
 }
 
-void Hallway::draw(GameMap& map) {
+void Hallway::draw(GameMap& map) const {
     int x = x1;
     int y = y1;
     TCODLine::init(x, y, corner_x, corner_y);
@@ -34,7 +34,7 @@ void Hallway::draw(GameMap& map) {
     } while (!TCODLine::step(&x, &y));
 }
 
-RectRoom GameMap::roomFromNode(TCODBsp* node) {
+RectRoom GameMap::roomFromNode(TCODBsp* node) const {
     TCODBsp* originalNode = node;
     for (auto & room : rooms) {
         node = originalNode;
@@ -47,7 +47,7 @@ RectRoom GameMap::roomFromNode(TCODBsp* node) {
     exit(1);
 }
 
-RectRoom::RectRoom(int x, int y, int xx, int yy, TCODBsp* node) {
+RectRoom::RectRoom(const int x, const int y, const int xx, const int yy, TCODBsp* node) {
     this->x = x;
     this->y = y;
     this->xx = xx;
@@ -57,7 +57,7 @@ RectRoom::RectRoom(int x, int y, int xx, int yy, TCODBsp* node) {
     this->cy = static_cast<int>(std::round(y + yy) / 2);
 }
 
-void RectRoom::draw(GameMap& map) {
+void RectRoom::draw(GameMap& map) const {
     printf("Drawing room: %d, %d to %d, %d", x,y, xx, yy);
     for (int i = y; i < yy; i++) {
         for (int j = x; j < xx; j++) {
@@ -67,15 +67,15 @@ void RectRoom::draw(GameMap& map) {
     printf("Done\n");
 }
 
-void GameMap::drawInBounds(int x, int y, int nx, int ny, TCODBsp* node) {
+void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny, TCODBsp* node) {
     //printf("Carving");
     TCODRandom* random = TCODRandom::getInstance();
-    int min_x = x;
-    int min_y = y;
-    int max_x = nx;
-    int max_y = ny;
-    int top_x = random->getInt(min_x + 1, abs(max_x - 4));
-    int top_y = random->getInt(min_y + 1, abs(max_y - 4));
+    const int min_x = x;
+    const int min_y = y;
+    const int max_x = nx;
+    const int max_y = ny;
+    const int top_x = random->getInt(min_x + 1, abs(max_x - 4));
+    const int top_y = random->getInt(min_y + 1, abs(max_y - 4));
     int bottom_x = top_x + random->getInt(3, 25, 24);
     int bottom_y = top_y + random->getInt(3, 25, 24);
     if (bottom_x >= max_x) bottom_x = max_x - 1;
@@ -89,17 +89,16 @@ void GameMap::drawInBounds(int x, int y, int nx, int ny, TCODBsp* node) {
         printf("Bottom y %d is less than top %d, ie rand was %d.\n", bottom_y, top_y, bottom_y - top_y);
         exit(1);
     }
-    RectRoom room(top_x, top_y, bottom_x, bottom_y, node);
-    rooms.push_back(room);
+    rooms.emplace_back(top_x, top_y, bottom_x, bottom_y, node);
 }
 
 void GameMap::connect(TCODBsp* left, TCODBsp* right) { // Partially from RogueLikeTuroials v2022
-    RectRoom lroom = this->roomFromNode(left);
-    RectRoom rroom = this->roomFromNode(right);
-    int x1 = lroom.cx;
-    int x2 = rroom.cx;
-    int y1 = lroom.cy;
-    int y2 = rroom.cy;
+    const RectRoom lroom = this->roomFromNode(left);
+    const RectRoom rroom = this->roomFromNode(right);
+    const int x1 = lroom.cx;
+    const int x2 = rroom.cx;
+    const int y1 = lroom.cy;
+    const int y2 = rroom.cy;
     int corner_x;
     int corner_y;
     if (TCODRandom::getInstance()->getFloat(0, 1) < 0.5) {
@@ -109,14 +108,13 @@ void GameMap::connect(TCODBsp* left, TCODBsp* right) { // Partially from RogueLi
         corner_x = x1;
         corner_y = y2;
     }
-    Hallway hall(x1, x2, y1, y2, corner_x, corner_y);
-    halls.push_back(hall);
+    halls.emplace_back(x1, x2, y1, y2, corner_x, corner_y);
 }
 
 class NodeCallback final : public ITCODBspCallback {
     public:
         GameMap& mapref;
-        NodeCallback(GameMap& map): mapref(map) {}
+        explicit NodeCallback(GameMap& map): mapref(map) {}
 
         bool visitNode(TCODBsp *node, void *userData) override {
             if (!node->isLeaf()) {
@@ -142,11 +140,11 @@ void GameMap::init() {
 }
 
 
-bool GameMap::isWalkable(int x, int y) const {
+bool GameMap::isWalkable(const int x, const int y) const {
     return tiles[x][y].walkable;
 }
 
-bool GameMap::isSolid(int x, int y) const {
+bool GameMap::isSolid(const int x, const int y) const {
     return tiles[x][y].solid;
 }
 
@@ -192,6 +190,5 @@ void GameMap::compute() {
     }
 }
 
-GameMap::GameMap(std::vector<Entity>& entities) : fmap(80, 45), entities(entities) {
-    return;
+GameMap::GameMap(std::vector<Entity>& entities) : fmap(80, 45), entities(entities), tiles{} {
 }

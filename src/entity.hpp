@@ -20,7 +20,7 @@ class Entity {
         std::string character;
         tcod::ColorRGB color;
         GameMap& map;
-        Entity(int x, int y, std::string character, tcod::ColorRGB color, bool ai, int maxhp, bool player, GameMap& map);
+        Entity(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, GameMap& map);
         void move(int dx, int dy);
         void damage(int damage);
         void render(tcod::Console& rconsole);

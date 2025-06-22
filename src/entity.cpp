@@ -3,7 +3,7 @@
 #include <string>
 #include "map.hpp"
 
-Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool ai, int maxHp, bool player, GameMap& map): map(map) {
+Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, GameMap& map): map(map) {
     this->x = x;
     this->y = y;
     this->ai = ai;
@@ -17,7 +17,7 @@ Entity::Entity(int x, int y, std::string character, tcod::ColorRGB color, bool a
     this->acted = false;
 }
 
-void Entity::damage(int damage) {
+void Entity::damage(const int damage) {
     hp -= damage;
     if (hp <= 0) {
         living = false;
@@ -27,7 +27,7 @@ void Entity::damage(int damage) {
 }
 
 
-void Entity::move(int dx, int dy) {
+void Entity::move(const int dx, const int dy) {
     if (!acted) {
         if (map.isWalkable(x + dx, y + dy)) {
             bool occupied = false;

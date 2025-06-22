@@ -35,13 +35,13 @@ class RectRoom{
         int cy;
         TCODBsp* node;
         RectRoom(int x, int y, int xx, int yy, TCODBsp* node);
-        void draw(GameMap& map);
+        void draw(GameMap& map) const;
 };
 
 class Hallway{
     public:
         Hallway(int x1, int x2, int y1, int y2, int corner_x, int corner_y);
-        void draw(GameMap& map);
+        void draw(GameMap& map) const;
         int x1;
         int x2;
         int y1;
@@ -68,5 +68,5 @@ class GameMap{
         void compute();
         void drawInBounds(int x, int y, int nx, int ny, TCODBsp* node);
         void wipe();
-        RectRoom roomFromNode(TCODBsp* node);
+        RectRoom roomFromNode(TCODBsp* node) const;
 };

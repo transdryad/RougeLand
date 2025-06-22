@@ -61,7 +61,7 @@ void Game::render() {
     context.present(console);
 }
 
-void Game::spawn(std::string character, tcod::ColorRGB color, bool ai, int maxHp, bool player) {
+void Game::spawn(const std::string& character, tcod::ColorRGB color, bool ai, int maxHp, bool player) {
     TCODRandom* random = TCODRandom::getInstance();
     int x = random->getInt(0, 80);
     int y = random->getInt(0, 45);
@@ -100,7 +100,9 @@ Game::Game(const int argc, char* argv[]): map(entities) {
     context = tcod::Context(params);
 
     map.fmap.computeFov(entities[0].x, entities[0].y, 10);
+}
 
+[[noreturn]] void Game::run() {
     while (true) {
         render();
         handle_events(); // Input event from player/os
@@ -115,3 +117,4 @@ Game::Game(const int argc, char* argv[]): map(entities) {
         }
     }
 }
+

@@ -17,8 +17,9 @@ class Game {
         tcod::Console console;
         tcod::Context context;
         tcod::Tileset tileset = tcod::load_tilesheet("src/tileset.png", {16, 16}, tcod::CHARMAP_CP437);
+        [[noreturn]] void run();
         void handle_events();
         void render();
-        void spawn(std::string character, tcod::ColorRGB color, bool ai, int maxHp, bool player);
+        void spawn(const std::string& character, tcod::ColorRGB color, bool ai, int maxHp, bool player);
         Game(int argc, char* argv[]);
 };
