@@ -18,6 +18,7 @@ class Game {
         tcod::Tileset tileset = tcod::load_tilesheet("src/tileset.png", {16, 16}, tcod::CHARMAP_CP437);
         [[noreturn]] void run();
         void handle_events();
+        void health_bar(tcod::Console& rconsole, int curVal, int maxVal, int width);
         void render();
         void spawn(EntityType etype);
         Game(int argc, char* argv[]);

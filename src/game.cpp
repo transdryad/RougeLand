@@ -52,12 +52,22 @@ void Game::handle_events() {
     }
 }
 
+void Game::health_bar(tcod::Console& rconsole, const int curVal, const int maxVal, const int width) {
+    const int bar_width = static_cast<double>(curVal) / maxVal * width;
+    tcod::draw_rect(rconsole, {0, 46, width, 1}, 1, std::nullopt, {{255, 0, 0}});
+    if (bar_width > 0) {
+        tcod::draw_rect(rconsole, {0, 46, bar_width, 1}, 1, std::nullopt, {{0, 255, 0}});
+    }
+    tcod::print(rconsole, {1, 46}, fmt::format("HP: {}/{}", entities[0].hp, entities[0].maxHp), {{255, 255, 255}}, std::nullopt);
+}
+
 void Game::render() {
     console.clear();
     map.render(console);
     for (Entity& entity : entities) {
         entity.render(console);
     }
+    health_bar(console, entities[0].hp, entities[0].maxHp, 20);
     context.present(console);
 }
 
@@ -67,7 +77,7 @@ void Game::spawn(const EntityType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            entities.emplace_back(Entity(x, y, "@", {210, 210, 255}, false, 15, true, 50, map)); break;
+            entities.emplace_back(Entity(x, y, "@", {210, 210, 255}, false, 20, true, 50, map)); break;
         case ORC:
             entities.emplace_back(Entity(x, y, "o", {0, 200, 0}, true, 10, false, 25, map)); break;
         default: break;
@@ -92,7 +102,7 @@ Game::Game(const int argc, char* argv[]): map(entities) {
     spawn(PLAYER);
     spawn(ORC);
 
-    console = tcod::Console{80, 45};
+    console = tcod::Console{80, 50};
     auto params = TCOD_ContextParams{};
 
     params.console = console.get();
