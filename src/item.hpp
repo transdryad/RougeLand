@@ -9,7 +9,7 @@ enum ItemType {
 
 class Item : public Entity {
     public:
-        ItemType type;
+        ItemType itype;
         Item(ItemType type, int x, int y, const std::string &character, tcod::ColorRGB color);
 };
 

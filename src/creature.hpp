@@ -4,6 +4,10 @@
 #include "item.hpp"
 #include <string>
 
+enum CreatureType {
+    PLAYER, ORC, GOBLIN
+};
+
 class Creature : public Entity {
     public:
         bool ai;

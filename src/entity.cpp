@@ -1,6 +1,8 @@
 #include "entity.hpp"
 #include "libtcod.hpp"
 #include <string>
+
+#include "creature.hpp"
 #include "map.hpp"
 
 Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, GameMap& map): map(map) {
@@ -8,6 +10,7 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
     this->y = y;
     this->character = character;
     this->color = color;
+    this->type = ENTITY;
 }
 
 void Entity::render(tcod::Console& rconsole) {

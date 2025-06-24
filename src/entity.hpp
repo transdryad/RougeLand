@@ -8,7 +8,7 @@
 class GameMap;
 
 enum EntityType {
-    PLAYER, ORC, GOBLIN
+    ITEM, CREATURE, ENTITY
 };
 
 class Entity {
@@ -19,6 +19,7 @@ class Entity {
         std::string character;
         tcod::ColorRGB color;
         std::reference_wrapper<GameMap> map;
+        EntityType type;
         Entity(int x, int y, const std::string &character, tcod::ColorRGB color, GameMap& map);
         void render(tcod::Console& rconsole);
         void spawn();

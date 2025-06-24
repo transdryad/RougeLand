@@ -21,6 +21,7 @@ Creature::Creature(const int x, const int y, const std::string &character, const
     this->level = 1;
     this->living = true;
     this->acted = false;
+    this->type = CREATURE;
 }
 
 void Creature::experience(const int exp) {
@@ -47,7 +48,7 @@ void Creature::move(const int dx, const int dy) {
             bool occupied = false;
             for (int i = 0; i < map.entities.size(); i++) {
                 Entity e = map.entities[i];
-                if (dynamic_cast<Creature*>(&e) != nullptr) {
+                if (e.type == CREATURE) {
                     if (Creature c = *dynamic_cast<Creature*>(&e); c.x == x + dx && c.y == y + dy) {
                         if (c.living) {
                             occupied = true;
@@ -58,7 +59,7 @@ void Creature::move(const int dx, const int dy) {
                             }
                         }
                     }
-                } else if (dynamic_cast<Item*>(&e) != nullptr) { // walk into an item, pick it up.
+                } else if (e.type == ITEM) { // walk into an item, pick it up.
                     Item it = *dynamic_cast<Item*>(&e);
                     it.x = 0;
                     it.y = 0;

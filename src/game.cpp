@@ -79,7 +79,7 @@ void Game::render() {
     context.present(console);
 }
 
-void Game::spawn(const EntityType etype) {
+void Game::spawn(const CreatureType etype) {
     TCODRandom* random = TCODRandom::getInstance();
     const int x = random->getInt(0, 80);
     const int y = random->getInt(0, 45);

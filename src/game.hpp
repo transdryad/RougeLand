@@ -3,6 +3,8 @@
 #include "libtcod.hpp"
 #include "spdlog/spdlog.h"
 #include <vector>
+
+#include "creature.hpp"
 #include "entity.hpp"
 #include "map.hpp"
 #include "item.hpp"
@@ -21,6 +23,6 @@ class Game {
         void handle_events();
         static void draw_bar(tcod::Console& rconsole, int curVal, int maxVal, int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, int x, int y);
         void render();
-        void spawn(EntityType etype);
+        void spawn(CreatureType etype);
         Game(int argc, char* argv[]);
 };
