@@ -52,13 +52,12 @@ void Game::handle_events() {
     }
 }
 
-void Game::health_bar(tcod::Console& rconsole, const int curVal, const int maxVal, const int width) {
+void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal, const int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, const int x, const int y) {
     const int bar_width = static_cast<double>(curVal) / maxVal * width;
-    tcod::draw_rect(rconsole, {0, 46, width, 1}, 1, std::nullopt, {{255, 0, 0}});
+    tcod::draw_rect(rconsole, {x, y, width, 1}, 1, std::nullopt, bottomc);
     if (bar_width > 0) {
-        tcod::draw_rect(rconsole, {0, 46, bar_width, 1}, 1, std::nullopt, {{0, 255, 0}});
+        tcod::draw_rect(rconsole, {x, y, bar_width, 1}, 1, std::nullopt, topc);
     }
-    tcod::print(rconsole, {1, 46}, fmt::format("HP: {}/{}", entities[0].hp, entities[0].maxHp), {{255, 255, 255}}, std::nullopt);
 }
 
 void Game::render() {
@@ -67,7 +66,13 @@ void Game::render() {
     for (Entity& entity : entities) {
         entity.render(console);
     }
-    health_bar(console, entities[0].hp, entities[0].maxHp, 20);
+
+    draw_bar(console, entities[0].hp, entities[0].maxHp, 30, {0, 255, 0}, {255, 0, 0}, 0, 46); //hp
+    tcod::print(console, {1, 46}, fmt::format("HP: {}/{}", entities[0].hp, entities[0].maxHp), {{255, 255, 255}}, std::nullopt);
+
+    draw_bar(console, entities[0].xp, 1000, 30, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
+    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", entities[0].level, entities[0].xp, 1000), {{255, 255, 255}}, std::nullopt);
+
     context.present(console);
 }
 

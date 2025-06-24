@@ -15,8 +15,18 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
     this->hp = maxHp;
     this->xpval = xpval;
     this->xp = 0;
+    this->level = 1;
     this->living = true;
     this->acted = false;
+}
+
+void Entity::experience(const int exp) {
+    if (xp + exp >= 1000) {
+        ++level;
+        xp = 0;
+    } else {
+        xp += exp;
+    }
 }
 
 void Entity::damage(const int damage) {
@@ -38,8 +48,8 @@ void Entity::move(const int dx, const int dy) {
                     if (e.living) {
                         occupied = true;
                         e.damage(attack);
-                        if (e.living) {
-                            xp = xp + e.xpval;
+                        if (!e.living) {
+                            experience(e.xpval);
                             e.xpval = 0;
                         }
                     }

@@ -18,6 +18,7 @@ class Entity {
         int hp;
         int maxHp;
         int attack;
+        int level;
         bool living;
         bool acted;
         bool player;
@@ -29,6 +30,7 @@ class Entity {
         Entity(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map);
         void move(int dx, int dy);
         void damage(int damage);
+        void experience(int exp);
         void render(tcod::Console& rconsole);
         void update();
         void spawn();
