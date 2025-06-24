@@ -4,8 +4,6 @@
 #include "libtcod.hpp"
 #include <random>
 #include <vector>
-#include <functional>
-#include <vector>
 #include "entity.hpp"
 
 class Entity;

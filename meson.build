@@ -17,4 +17,4 @@ libtcod = sub_pro.dependency('libtcod')
 
 add_project_arguments('-g', language : 'cpp')
 
-RougeLand = executable('RougeLand', 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
+RougeLand = executable('RougeLand', 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', 'src/item.cpp', 'src/creature.cpp', install : true, dependencies: [fmt, spdlog, libtcod])

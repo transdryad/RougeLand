@@ -12,11 +12,13 @@
 #include <SDL3/SDL_main.h>
 #include "entity.hpp"
 #include <functional>
+#include "creature.hpp"
 #include "map.hpp"
 
 void Game::handle_events() {
     //printf("Player.acted = %s.\n", player.acted ? "true" : "false");
-    while (!entities[0].acted) {
+    Creature& player = *dynamic_cast<Creature*>(&entities[0]);
+    while (!player.acted) {
         SDL_Event event;
         SDL_PollEvent(&event);
         context.convert_event_coordinates(event);
@@ -27,21 +29,21 @@ void Game::handle_events() {
                 //printf("KeyPress\n");
                 switch (event.key.scancode) {
                     case SDL_SCANCODE_W:
-                        entities[0].move(0, -1); break;
+                        player.move(0, -1); break;
                     case SDL_SCANCODE_A:
-                        entities[0].move(-1, 0); break;
+                        player.move(-1, 0); break;
                     case SDL_SCANCODE_S:
-                        entities[0].move(0, 1); break;
+                        player.move(0, 1); break;
                     case SDL_SCANCODE_D:
-                        entities[0].move(1, 0); break;
+                        player.move(1, 0); break;
                     case SDL_SCANCODE_Q:
-                        entities[0].move(-1, -1); break;
+                        player.move(-1, -1); break;
                     case SDL_SCANCODE_E:
-                        entities[0].move(1, -1); break;
+                        player.move(1, -1); break;
                     case SDL_SCANCODE_Z:
-                        entities[0].move(-1, 1); break;
+                        player.move(-1, 1); break;
                     case SDL_SCANCODE_C:
-                        entities[0].move(1, 1); break;
+                        player.move(1, 1); break;
                     case SDL_SCANCODE_F8:
                         printf("Recomputing world.");
                         map.compute(); break;
@@ -61,17 +63,18 @@ void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal,
 }
 
 void Game::render() {
+    Creature& player = *dynamic_cast<Creature*>(&entities[0]);
     console.clear();
     map.render(console);
     for (Entity& entity : entities) {
         entity.render(console);
     }
 
-    draw_bar(console, entities[0].hp, entities[0].maxHp, 30, {0, 255, 0}, {255, 0, 0}, 0, 46); //hp
-    tcod::print(console, {1, 46}, fmt::format("HP: {}/{}", entities[0].hp, entities[0].maxHp), {{255, 255, 255}}, std::nullopt);
+    draw_bar(console, player.hp, player.maxHp, 24, {0, 255, 0}, {255, 0, 0}, 0, 46); //hp
+    tcod::print(console, {1, 46}, fmt::format("HP: {}/{}", player.hp, player.maxHp), {{255, 255, 255}}, std::nullopt);
 
-    draw_bar(console, entities[0].xp, 1000, 30, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
-    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", entities[0].level, entities[0].xp, 1000), {{255, 255, 255}}, std::nullopt);
+    draw_bar(console, player.xp, 1000, 24, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
+    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 1000), {{255, 255, 255}}, std::nullopt);
 
     context.present(console);
 }
@@ -82,9 +85,9 @@ void Game::spawn(const EntityType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            entities.emplace_back(Entity(x, y, "@", {210, 210, 255}, false, 20, true, 50, map)); break;
+            entities.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, map)); break;
         case ORC:
-            entities.emplace_back(Entity(x, y, "o", {0, 200, 0}, true, 10, false, 25, map)); break;
+            entities.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, map)); break;
         default: break;
     }
     entities.back().spawn();

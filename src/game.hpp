@@ -5,12 +5,13 @@
 #include <vector>
 #include "entity.hpp"
 #include "map.hpp"
-
+#include "item.hpp"
 
 class Game {
     public:
         std::shared_ptr<spdlog::logger> logger;
         std::vector<Entity> entities;
+        std::vector<Item> items;
         GameMap map;
         TCODRandom* randomizer = TCODRandom::getInstance();
         tcod::Console console;

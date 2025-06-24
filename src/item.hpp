@@ -1,0 +1,15 @@
+#pragma once
+
+#include "entity.hpp"
+#include "libtcod.hpp"
+
+enum ItemType {
+    SWORD, HELMET
+};
+
+class Item : public Entity {
+    public:
+        ItemType type;
+        Item(ItemType type, int x, int y, const std::string &character, tcod::ColorRGB color);
+};
+

@@ -3,6 +3,7 @@
 #include <string>
 #include "libtcod.hpp"
 #include "map.hpp"
+#include <functional>
 
 class GameMap;
 
@@ -12,26 +13,14 @@ enum EntityType {
 
 class Entity {
     public:
+        virtual ~Entity() = default;
         int x;
         int y;
-        bool ai;
-        int hp;
-        int maxHp;
-        int attack;
-        int level;
-        bool living;
-        bool acted;
-        bool player;
-        int xp;
-        int xpval;
         std::string character;
         tcod::ColorRGB color;
-        GameMap& map;
-        Entity(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map);
-        void move(int dx, int dy);
-        void damage(int damage);
-        void experience(int exp);
+        std::reference_wrapper<GameMap> map;
+        Entity(int x, int y, const std::string &character, tcod::ColorRGB color, GameMap& map);
         void render(tcod::Console& rconsole);
-        void update();
         void spawn();
+        virtual void update();
 };

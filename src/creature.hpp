@@ -1,0 +1,28 @@
+#pragma once
+#include "map.hpp"
+#include "entity.hpp"
+#include "item.hpp"
+#include <string>
+
+class Creature : public Entity {
+    public:
+        bool ai;
+        int hp;
+        int maxHp;
+        int attack;
+        int level;
+        bool living;
+        bool acted;
+        bool player;
+        int xp;
+        int xpval;
+        std::vector<Item> items;
+        std::string character;
+        tcod::ColorRGB color;
+        GameMap& map;
+        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map);
+        void move(int dx, int dy);
+        void damage(int damage);
+        void experience(int exp);
+        void update();
+};
