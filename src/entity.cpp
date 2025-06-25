@@ -10,7 +10,6 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
     this->y = y;
     this->character = character;
     this->color = color;
-    this->type = ENTITY;
 }
 
 void Entity::render(tcod::Console& rconsole) {

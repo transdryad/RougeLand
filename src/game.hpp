@@ -12,7 +12,7 @@
 class Game {
     public:
         std::shared_ptr<spdlog::logger> logger;
-        std::vector<Entity> entities;
+        std::vector<Creature> creatures;
         std::vector<Item> items;
         GameMap map;
         TCODRandom* randomizer = TCODRandom::getInstance();

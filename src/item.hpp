@@ -3,6 +3,8 @@
 #include "entity.hpp"
 #include "libtcod.hpp"
 
+class Entity;
+
 enum ItemType {
     SWORD, HELMET
 };

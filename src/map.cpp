@@ -190,5 +190,5 @@ void GameMap::compute() {
     }
 }
 
-GameMap::GameMap(std::vector<Entity>& entities) : fmap(80, 45), entities(entities), tiles{} {
+GameMap::GameMap(std::vector<Creature>& entities, std::vector<Item>& items) : fmap(80, 45), entities(entities), items(items), tiles{} {
 }

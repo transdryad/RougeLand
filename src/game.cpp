@@ -17,7 +17,7 @@
 
 void Game::handle_events() {
     //printf("Player.acted = %s.\n", player.acted ? "true" : "false");
-    Creature& player = *dynamic_cast<Creature*>(&entities[0]);
+    Creature& player = *dynamic_cast<Creature*>(&creatures[0]);
     while (!player.acted) {
         SDL_Event event;
         SDL_PollEvent(&event);
@@ -63,11 +63,14 @@ void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal,
 }
 
 void Game::render() {
-    Creature& player = *dynamic_cast<Creature*>(&entities[0]);
+    Creature& player = creatures[0];
     console.clear();
     map.render(console);
-    for (Entity& entity : entities) {
+    for (Creature& entity : creatures) {
         entity.render(console);
+    }
+    for (Item& item : items) {
+        item.render(console);
     }
 
     draw_bar(console, player.hp, player.maxHp, 24, {0, 255, 0}, {255, 0, 0}, 0, 46); //hp
@@ -85,15 +88,15 @@ void Game::spawn(const CreatureType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            entities.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, map)); break;
+            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, map)); break;
         case ORC:
-            entities.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, map)); break;
+            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, map)); break;
         default: break;
     }
-    entities.back().spawn();
+    creatures.back().spawn();
 }
 
-Game::Game(const int argc, char* argv[]): map(entities) {
+Game::Game(const int argc, char* argv[]): map(creatures, items) {
     try {
         logger = spdlog::basic_logger_mt("file", "log.txt");
         spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
@@ -123,18 +126,18 @@ Game::Game(const int argc, char* argv[]): map(entities) {
 
     context = tcod::Context(params);
 
-    map.fmap.computeFov(entities[0].x, entities[0].y, 10);
+    map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
 }
 
 [[noreturn]] void Game::run() {
     while (true) {
         render();
         handle_events(); // Input event from player/os
-        map.fmap.computeFov(entities[0].x, entities[0].y, 10);
+        map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
         if (randomizer->getFloat(0, 1) > 0.01) {
             spawn(ORC);
         }
-        for (Entity& entity : entities) { // Do monster ai/check for death
+        for (Entity& entity : creatures) { // Do monster ai/check for death
             if (map.fmap.isInFov(entity.x, entity.y)) {
                 entity.update();
             }

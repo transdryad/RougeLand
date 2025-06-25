@@ -4,7 +4,12 @@
 #include "libtcod.hpp"
 #include <random>
 #include <vector>
-#include "entity.hpp"
+
+//#include "creature.hpp"
+//#include "item.hpp"
+
+class Item;
+class Creature;
 
 class Entity;
 
@@ -50,12 +55,12 @@ class Hallway{
 
 class GameMap{
     public:
-        GameMap(std::vector<Entity>& entities);
-
+        GameMap(std::vector<Creature>& entities, std::vector<Item>& items);
         void init();
         TCODBsp bsptree;
         TCODMap fmap;
-        std::vector<Entity>& entities;
+        std::vector<Creature>& entities;
+        std::vector<Item>& items;
         MapTile tiles[80][45];
         void connect(TCODBsp* left, TCODBsp* right);
         std::vector<RectRoom> rooms;

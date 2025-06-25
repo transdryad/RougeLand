@@ -21,9 +21,6 @@ class Creature : public Entity {
         int xp;
         int xpval;
         std::vector<Item> items;
-        std::string character;
-        tcod::ColorRGB color;
-        GameMap& map;
         Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map);
         void move(int dx, int dy);
         void damage(int damage);
