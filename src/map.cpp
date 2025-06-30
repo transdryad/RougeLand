@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include <cmath>
 #include "entity.hpp"
+#include "item.hpp"
 
 Hallway::Hallway(const int x1, const int x2, const int y1, const int y2, const int corner_x, const int corner_y) {
     this->x1 = x1;
@@ -89,7 +90,21 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
         printf("Bottom y %d is less than top %d, ie rand was %d.\n", bottom_y, top_y, bottom_y - top_y);
         exit(1);
     }
+    int inum = random->getInt(0, 3);
+    for (int i = 0; i < inum; i++) {
+        int ix = random->getInt(top_x, bottom_x);
+        int iy = random->getInt(top_y, bottom_y);
+        auto itype = static_cast<ItemType>(random->getInt(0, 2));
+        switch (itype) {
+            case SWORD:
+                items.emplace_back(Item(itype, ix, iy, "!", {204, 204, 204}, *this)); break;
+            case HELMET:
+                items.emplace_back(Item(itype, ix, iy, "^", {119, 119, 119}, *this)); break;
+            default: break;
+        }
+    }
     rooms.emplace_back(top_x, top_y, bottom_x, bottom_y, node);
+    printf("done\n");
 }
 
 void GameMap::connect(TCODBsp* left, TCODBsp* right) { // Partially from RogueLikeTuroials v2022

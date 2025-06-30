@@ -5,6 +5,12 @@
 #include "map.hpp"
 #include "item.hpp"
 
+void Creature::render(tcod::Console& rconsole) {
+    if (map.get().fmap.isInFov(x, y)) {
+        tcod::print(rconsole, {x, y}, character, color, std::nullopt);
+    }
+}
+
 Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, GameMap& map): Entity(x, y, character, color,map){
     this->x = x;
     this->y = y;
@@ -45,7 +51,7 @@ void Creature::move(const int dx, const int dy) {
         if (map.get().isWalkable(x + dx, y + dy)) {
             bool occupied = false;
             for (int i = 0; i < map.get().entities.size(); i++) {
-                if (Creature c = map.get().entities[i]; c.x == x + dx && c.y == y + dy) {
+                if (Creature& c = map.get().entities[i]; c.x == x + dx && c.y == y + dy) {
                     if (c.living) {
                         occupied = true;
                         c.damage(attack);
@@ -58,10 +64,12 @@ void Creature::move(const int dx, const int dy) {
             }
             for (int i = 0; i < map.get().items.size(); i++) {
                 Item it = map.get().items[i];
-                it.x = 0;
-                it.y = 0;
-                map.get().entities.erase(map.get().entities.begin() + i);
-                items.emplace_back(it);
+                if (it.x == x + dx && it.y == y + dy) {
+                    it.x = 0;
+                    it.y = 0;
+                    map.get().entities.erase(map.get().entities.begin() + i);
+                    items.emplace_back(it);
+                }
             }
             if (!occupied) {
                 x += dx;
@@ -82,10 +90,10 @@ void Creature::update() {
         auto* path = new TCODPath(&map.get().fmap);
         if (!(x == map.get().entities[0].x && y == map.get().entities[0].y)) {
             path->compute(x, y, map.get().entities[0].x, map.get().entities[0].y); //entities[0] is the player
-            int x;
-            int y;
+            int nx;
+            int ny;
             path->walk(&x, &y, true);
-            this->move(x - this->x, y - this->y);
+            this->move(nx - x, ny - y);
         }
     }
     acted = false;

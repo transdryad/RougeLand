@@ -16,7 +16,7 @@ class Entity {
         tcod::ColorRGB color;
         std::reference_wrapper<GameMap> map;
         Entity(int x, int y, const std::string &character, tcod::ColorRGB color, GameMap& map);
-        void render(tcod::Console& rconsole);
+        virtual void render(tcod::Console& rconsole);
         void spawn();
         virtual void update();
 };

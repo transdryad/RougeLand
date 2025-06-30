@@ -12,11 +12,6 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
     this->color = color;
 }
 
-void Entity::render(tcod::Console& rconsole) {
-    if (map.get().fmap.isInFov(x, y)) {
-        tcod::print(rconsole, {x, y}, character, color, std::nullopt);
-    }
-}
 
 void Entity::spawn() {
     TCODRandom* randomizer = TCODRandom::getInstance();
@@ -29,3 +24,4 @@ void Entity::spawn() {
 }
 
 void Entity::update() {}
+void Entity::render(tcod::Console& console) {}

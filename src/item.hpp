@@ -2,8 +2,10 @@
 
 #include "entity.hpp"
 #include "libtcod.hpp"
+#include "map.hpp"
 
 class Entity;
+class GameMap;
 
 enum ItemType {
     SWORD, HELMET
@@ -12,6 +14,7 @@ enum ItemType {
 class Item : public Entity {
     public:
         ItemType itype;
-        Item(ItemType type, int x, int y, const std::string &character, tcod::ColorRGB color);
+        Item(ItemType type, int x, int y, const std::string &character, tcod::ColorRGB color, GameMap& map);
+        void render(tcod::Console& console) override;
 };
 
