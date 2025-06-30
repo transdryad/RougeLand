@@ -14,7 +14,7 @@ enum ItemType {
 class Item : public Entity {
     public:
         ItemType itype;
-        Item(ItemType type, int x, int y, const std::string &character, tcod::ColorRGB color, GameMap& map);
+        Item(ItemType type, int x, int y, GameMap& map);
         void render(tcod::Console& console) override;
 };
 

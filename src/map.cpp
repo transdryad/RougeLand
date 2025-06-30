@@ -97,9 +97,9 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
         auto itype = static_cast<ItemType>(random->getInt(0, 2));
         switch (itype) {
             case SWORD:
-                items.emplace_back(Item(itype, ix, iy, "!", {204, 204, 204}, *this)); break;
+                items.emplace_back(Item(itype, ix, iy, *this)); break;
             case HELMET:
-                items.emplace_back(Item(itype, ix, iy, "^", {119, 119, 119}, *this)); break;
+                items.emplace_back(Item(itype, ix, iy, *this)); break;
             default: break;
         }
     }

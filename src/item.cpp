@@ -8,6 +8,15 @@ void Item::render(tcod::Console& rconsole) {
 }
 
 
-Item::Item(const ItemType type, const int x, const int y, const std::string &character, const tcod::ColorRGB color, GameMap& map): Entity(Entity(x, y, character, color, map)) {
+Item::Item(const ItemType type, const int x, const int y, GameMap& map): Entity(Entity(x, y, " ", {0, 0, 0}, map)) {
     this->itype = type;
+    switch (itype) {
+        case SWORD:
+            character = "!";
+            color = {204, 204, 204}; break;
+        case HELMET:
+            character = "^";
+            color = {119, 119, 119}; break;
+        default: break;
+    }
 }
