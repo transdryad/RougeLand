@@ -95,12 +95,14 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
         int ix = random->getInt(top_x, bottom_x);
         int iy = random->getInt(top_y, bottom_y);
         auto itype = static_cast<ItemType>(random->getInt(0, 2));
-        switch (itype) {
-            case SWORD:
-                items.emplace_back(Item(itype, ix, iy, *this)); break;
-            case HELMET:
-                items.emplace_back(Item(itype, ix, iy, *this)); break;
-            default: break;
+        if (isWalkable(ix, iy)) {
+            switch (itype) {
+                case SWORD:
+                    items.emplace_back(Item(itype, ix, iy, 1, *this)); break;
+                case HELMET:
+                    items.emplace_back(Item(itype, ix, iy, 1, *this)); break;
+                default: break;
+            }
         }
     }
     rooms.emplace_back(top_x, top_y, bottom_x, bottom_y, node);

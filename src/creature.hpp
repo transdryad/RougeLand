@@ -20,10 +20,11 @@ class Creature : public Entity {
         bool player;
         int xp;
         int xpval;
+        int ac;
         std::vector<Item> items;
         Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map);
         void move(int dx, int dy);
-        void damage(int damage);
+        void damage(int ar, int damage);
         void experience(int exp);
         void update();
         void render(tcod::Console& console) override;

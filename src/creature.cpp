@@ -15,7 +15,7 @@ Creature::Creature(const int x, const int y, const std::string &character, const
     this->x = x;
     this->y = y;
     this->ai = ai;
-    this->attack = 1;
+    this->attack = 2;
     this->player = player;
     this->character = character;
     this->color = color;
@@ -26,6 +26,7 @@ Creature::Creature(const int x, const int y, const std::string &character, const
     this->level = 1;
     this->living = true;
     this->acted = false;
+    this->ac = 10;
 }
 
 void Creature::experience(const int exp) {
@@ -37,8 +38,10 @@ void Creature::experience(const int exp) {
     }
 }
 
-void Creature::damage(const int damage) {
-    hp -= damage;
+void Creature::damage(int ar, const int damage) {
+    if (ar >= ac) {
+        hp -= damage;
+    }
     if (hp <= 0) {
         living = false;
         ai = false;
@@ -54,7 +57,7 @@ void Creature::move(const int dx, const int dy) {
                 if (Creature& c = map.get().entities[i]; c.x == x + dx && c.y == y + dy) {
                     if (c.living) {
                         occupied = true;
-                        c.damage(attack);
+                        c.damage(TCODRandom::getInstance()->getInt(1, 20), attack);
                         if (!c.living) {
                             experience(c.xpval);
                             c.xpval = 0;
@@ -67,7 +70,7 @@ void Creature::move(const int dx, const int dy) {
                 if (it.x == x + dx && it.y == y + dy) {
                     it.x = 0;
                     it.y = 0;
-                    map.get().entities.erase(map.get().entities.begin() + i);
+                    map.get().items.erase(map.get().items.begin() + i);
                     items.emplace_back(it);
                 }
             }
@@ -92,7 +95,7 @@ void Creature::update() {
             path->compute(x, y, map.get().entities[0].x, map.get().entities[0].y); //entities[0] is the player
             int nx;
             int ny;
-            path->walk(&x, &y, true);
+            path->walk(&nx, &ny, true);
             this->move(nx - x, ny - y);
         }
     }

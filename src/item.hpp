@@ -14,7 +14,9 @@ enum ItemType {
 class Item : public Entity {
     public:
         ItemType itype;
-        Item(ItemType type, int x, int y, GameMap& map);
+        int value;
+        bool equipped;
+        Item(ItemType type, int x, int y, int value, GameMap& map);
         void render(tcod::Console& console) override;
 };
 

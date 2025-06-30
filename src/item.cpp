@@ -8,8 +8,10 @@ void Item::render(tcod::Console& rconsole) {
 }
 
 
-Item::Item(const ItemType type, const int x, const int y, GameMap& map): Entity(Entity(x, y, " ", {0, 0, 0}, map)) {
+Item::Item(const ItemType type, const int x, const int y, int value, GameMap& map): Entity(Entity(x, y, " ", {0, 0, 0}, map)) {
     this->itype = type;
+    this->value = value;
+    this->equipped = false;
     switch (itype) {
         case SWORD:
             character = "!";
