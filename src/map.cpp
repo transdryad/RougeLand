@@ -7,6 +7,7 @@
 #include <cmath>
 #include "entity.hpp"
 #include "item.hpp"
+#include "game.hpp"
 
 Hallway::Hallway(const int x1, const int x2, const int y1, const int y2, const int corner_x, const int corner_y) {
     this->x1 = x1;
@@ -59,13 +60,13 @@ RectRoom::RectRoom(const int x, const int y, const int xx, const int yy, TCODBsp
 }
 
 void RectRoom::draw(GameMap& map) const {
-    printf("Drawing room: %d, %d to %d, %d", x,y, xx, yy);
+    map.game.logger->info(fmt::format("Drawing room: {}, {} to {}, {}.", x, y, xx, yy));
     for (int i = y; i < yy; i++) {
         for (int j = x; j < xx; j++) {
             map.tiles[j][i] = {false, true, false, ".", {255, 255, 255}};
         }
     }
-    printf("Done\n");
+    map.game.logger->info("Done\n");
 }
 
 void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny, TCODBsp* node) {
@@ -81,32 +82,33 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
     int bottom_y = top_y + random->getInt(3, 25, 24);
     if (bottom_x >= max_x) bottom_x = max_x - 1;
     if (bottom_y >= max_y) bottom_y = max_y - 1;
-    printf("Drawing room from %d,%d to %d,%d.\n", top_x, top_y, bottom_x, bottom_y);
+    game.logger->info(fmt::format("Drawing room from {}, {} to {}, {}.\n", top_x, top_y, bottom_x, bottom_y));
     if (bottom_x < top_x) {
-        printf("Bottom x %d is less than top %d, ie rand was %d.\n", bottom_x, top_x, bottom_x - top_x);
+        game.logger->error(fmt::format("Bottom x {} is less than top {}, ie rand was {}.\n", bottom_x, top_x, bottom_x - top_x));
         exit(1);
     }
     if (bottom_y < top_y) {
-        printf("Bottom y %d is less than top %d, ie rand was %d.\n", bottom_y, top_y, bottom_y - top_y);
+        game.logger->error(fmt::format("Bottom y {} is less than top {}, ie rand was {}.\n", bottom_y, top_y, bottom_y - top_y));
         exit(1);
     }
-    int inum = random->getInt(0, 3);
+    int inum = random->getInt(1, 3);
     for (int i = 0; i < inum; i++) {
         int ix = random->getInt(top_x, bottom_x);
         int iy = random->getInt(top_y, bottom_y);
         auto itype = static_cast<ItemType>(random->getInt(0, 2));
         if (isWalkable(ix, iy)) {
+            game.logger->info("New Item.");
             switch (itype) {
                 case SWORD:
-                    items.emplace_back(Item(itype, ix, iy, 1, *this)); break;
+                    items.emplace_back(Item(itype, ix, iy, random->getInt(1, 6), *this)); break;
                 case HELMET:
-                    items.emplace_back(Item(itype, ix, iy, 1, *this)); break;
+                    items.emplace_back(Item(itype, ix, iy, random->getInt(1, 3), *this)); break;
                 default: break;
             }
         }
     }
     rooms.emplace_back(top_x, top_y, bottom_x, bottom_y, node);
-    printf("done\n");
+    game.logger->info("done\n");
 }
 
 void GameMap::connect(TCODBsp* left, TCODBsp* right) { // Partially from RogueLikeTuroials v2022
@@ -140,7 +142,7 @@ class NodeCallback final : public ITCODBspCallback {
                 mapref.connect(left, right);
                 return true;
             }
-            printf("node pos %d,%d to %d,%d level %d: ", node->x,node->y,node->w + node->x, node->h + node->y, node->level);
+            mapref.game.logger->info(fmt::format("node pos {}, {} to {}, {} level {}: .\n", node->x,node->y,node->w + node->x, node->h + node->y, node->level));
             mapref.drawInBounds(node->x,node->y,node->w + node->x, node->h + node->y, node);
             return true;
         }
@@ -207,5 +209,5 @@ void GameMap::compute() {
     }
 }
 
-GameMap::GameMap(std::vector<Creature>& entities, std::vector<Item>& items) : fmap(80, 45), entities(entities), items(items), tiles{} {
+GameMap::GameMap(std::vector<Creature>& entities, std::vector<Item>& items, Game& game) : fmap(80, 45), entities(entities), items(items), tiles{}, game(game) {
 }

@@ -4,12 +4,14 @@
 #include "libtcod.hpp"
 #include <random>
 #include <vector>
+//#include "game.hpp"
 
 //#include "creature.hpp"
 //#include "item.hpp"
 
 class Item;
 class Creature;
+class Game;
 
 class Entity;
 
@@ -55,7 +57,7 @@ class Hallway{
 
 class GameMap{
     public:
-        GameMap(std::vector<Creature>& entities, std::vector<Item>& items);
+        GameMap(std::vector<Creature>& entities, std::vector<Item>& items, Game& game);
         void init();
         TCODBsp bsptree;
         TCODMap fmap;
@@ -63,6 +65,7 @@ class GameMap{
         std::vector<Item>& items;
         MapTile tiles[80][45];
         void connect(TCODBsp* left, TCODBsp* right);
+        Game& game;
         std::vector<RectRoom> rooms;
         std::vector<Hallway> halls;
         bool isWalkable(int x, int y) const;

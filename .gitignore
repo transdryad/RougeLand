@@ -11,3 +11,5 @@ subprojects/libtcod/
 subprojects/libtcod/*
 
 vgcore*
+
+logs/

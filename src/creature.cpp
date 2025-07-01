@@ -39,7 +39,14 @@ void Creature::experience(const int exp) {
 }
 
 void Creature::damage(int ar, const int damage) {
-    if (ar >= ac) {
+    int acbuff = 0;
+    for (Item item : items) {
+        if (item.equipped && item.itype == HELMET) { 
+            acbuff = item.value;
+            break;
+        }
+    }
+    if (ar >= ac + acbuff) {
         hp -= damage;
     }
     if (hp <= 0) {
@@ -56,8 +63,15 @@ void Creature::move(const int dx, const int dy) {
             for (int i = 0; i < map.get().entities.size(); i++) {
                 if (Creature& c = map.get().entities[i]; c.x == x + dx && c.y == y + dy) {
                     if (c.living) {
+                        int sattack = 0;
+                        for (Item item : items) {
+                            if (item.itype == SWORD && item.equipped) {
+                                sattack = item.value;
+                                break;
+                            }
+                        }
                         occupied = true;
-                        c.damage(TCODRandom::getInstance()->getInt(1, 20), attack);
+                        c.damage(TCODRandom::getInstance()->getInt(1, 20), attack + sattack);
                         if (!c.living) {
                             experience(c.xpval);
                             c.xpval = 0;
@@ -70,6 +84,7 @@ void Creature::move(const int dx, const int dy) {
                 if (it.x == x + dx && it.y == y + dy) {
                     it.x = 0;
                     it.y = 0;
+                    it.equipped = true;
                     map.get().items.erase(map.get().items.begin() + i);
                     items.emplace_back(it);
                 }

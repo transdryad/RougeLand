@@ -14,9 +14,13 @@
 #include <functional>
 #include "creature.hpp"
 #include "map.hpp"
+#include <ctime>
+#include <stdio.h>
+#include <time.h>
+#include <cstring>
 
 void Game::handle_events() {
-    //printf("Player.acted = %s.\n", player.acted ? "true" : "false");
+    //logger->info(fmt::format("Player.acted = %s.\n", player.acted ? "true" : "false"));
     Creature& player = *dynamic_cast<Creature*>(&creatures[0]);
     while (!player.acted) {
         SDL_Event event;
@@ -96,9 +100,17 @@ void Game::spawn(const CreatureType etype) {
     creatures.back().spawn();
 }
 
-Game::Game(const int argc, char* argv[]): map(creatures, items) {
+Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     try {
-        logger = spdlog::basic_logger_mt("file", "log.txt");
+        time_t now = time(0);
+        struct tm tstruct;
+        char buf[80];
+        tstruct = *localtime(&now);
+        strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
+        std::string fname = "logs/";
+        fname += buf;
+        fname.append("-log.txt");
+        logger = spdlog::basic_logger_mt("file", fname);
         spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
     } catch (const spdlog::spdlog_ex &ex) {
         fmt::print(stderr, "Log init failed: {}\n", ex.what());
