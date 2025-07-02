@@ -26,6 +26,6 @@ class Creature : public Entity {
         void move(int dx, int dy);
         void damage(int ar, int damage);
         void experience(int exp);
-        void update();
+        void update() override;
         void render(tcod::Console& console) override;
 };

@@ -3,10 +3,10 @@
 #include <fmt/core.h>
 #include "game.hpp"
 
-void Item::render(tcod::Console& rconsole) {
+void Item::render(tcod::Console& console) {
     map.get().game.logger->info(fmt::format("Rendering item at {}, {}", x, y));
     if (map.get().fmap.isInFov(x, y)) {
-        tcod::print(rconsole, {x, y}, character, color, std::nullopt);
+        tcod::print(console, {x, y}, character, color, std::nullopt);
     }
 }
 

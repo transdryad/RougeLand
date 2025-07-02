@@ -15,9 +15,6 @@
 #include "creature.hpp"
 #include "map.hpp"
 #include <ctime>
-#include <stdio.h>
-#include <time.h>
-#include <cstring>
 
 void Game::handle_events() {
     //logger->info(fmt::format("Player.acted = %s.\n", player.acted ? "true" : "false"));
@@ -103,8 +100,8 @@ void Game::spawn(const CreatureType etype) {
 
 Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     try {
-        time_t now = time(0);
-        struct tm tstruct;
+        const time_t now = time(nullptr);
+        struct tm tstruct{};
         char buf[80];
         tstruct = *localtime(&now);
         strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);

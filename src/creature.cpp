@@ -40,7 +40,7 @@ void Creature::experience(const int exp) {
 
 void Creature::damage(int ar, const int damage) {
     int acbuff = 0;
-    for (Item item : items) {
+    for (const Item& item : items) {
         if (item.equipped && item.itype == HELMET) { 
             acbuff = item.value;
             break;
@@ -60,11 +60,11 @@ void Creature::move(const int dx, const int dy) {
     if (!acted) {
         if (map.get().isWalkable(x + dx, y + dy)) {
             bool occupied = false;
-            for (int i = 0; i < map.get().entities.size(); i++) {
-                if (Creature& c = map.get().entities[i]; c.x == x + dx && c.y == y + dy) {
+            for (auto& c : map.get().entities) {
+                if (c.x == x + dx && c.y == y + dy) {
                     if (c.living) {
                         int sattack = 0;
-                        for (Item item : items) {
+                        for (const Item& item : items) {
                             if (item.itype == SWORD && item.equipped) {
                                 sattack = item.value;
                                 break;
@@ -80,8 +80,7 @@ void Creature::move(const int dx, const int dy) {
                 }
             }
             for (int i = 0; i < map.get().items.size(); i++) {
-                Item it = map.get().items[i];
-                if (it.x == x + dx && it.y == y + dy) {
+                if (Item it = map.get().items[i]; it.x == x + dx && it.y == y + dy) {
                     it.x = 0;
                     it.y = 0;
                     it.equipped = true;
