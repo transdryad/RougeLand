@@ -1,7 +1,10 @@
 #include "item.hpp"
 #include "map.hpp"
+#include <fmt/core.h>
+#include "game.hpp"
 
 void Item::render(tcod::Console& rconsole) {
+    map.get().game.logger->info(fmt::format("Rendering item at {}, {}", x, y));
     if (map.get().fmap.isInFov(x, y)) {
         tcod::print(rconsole, {x, y}, character, color, std::nullopt);
     }

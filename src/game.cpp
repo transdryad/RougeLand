@@ -74,6 +74,7 @@ void Game::render() {
         entity.render(console);
     }
     for (Item& item : items) {
+        logger->info("Rendering Item");
         item.render(console);
     }
 
