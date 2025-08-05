@@ -99,6 +99,7 @@ void Game::spawn(const CreatureType etype) {
 }
 
 Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
+    ui = false;
     try {
         const time_t now = time(nullptr);
         struct tm tstruct{};
