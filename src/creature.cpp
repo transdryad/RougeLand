@@ -99,7 +99,7 @@ void Creature::move(const int dx, const int dy) {
 
 void Creature::update() {
     if (!living && player) {
-        printf("You died with %d xp!", xp);
+        printf("You died with %d xp!\n", xp);
         map.get().wipe();
         exit(0);
     }

@@ -23,7 +23,8 @@ class Game {
         [[noreturn]] void run();
         void handle_events();
         static void draw_bar(tcod::Console& rconsole, int curVal, int maxVal, int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, int x, int y);
-        void render();
+        void render_game();
+        void render_ui();
         void spawn(CreatureType etype);
         Game(int argc, char* argv[]);
 };

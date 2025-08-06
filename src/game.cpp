@@ -28,27 +28,39 @@ void Game::handle_events() {
                 exit(0);
             case SDL_EVENT_KEY_DOWN:
                 //printf("KeyPress\n");
-                switch (event.key.scancode) {
-                    case SDL_SCANCODE_W:
-                        player.move(0, -1); break;
-                    case SDL_SCANCODE_A:
-                        player.move(-1, 0); break;
-                    case SDL_SCANCODE_S:
-                        player.move(0, 1); break;
-                    case SDL_SCANCODE_D:
-                        player.move(1, 0); break;
-                    case SDL_SCANCODE_Q:
-                        player.move(-1, -1); break;
-                    case SDL_SCANCODE_E:
-                        player.move(1, -1); break;
-                    case SDL_SCANCODE_Z:
-                        player.move(-1, 1); break;
-                    case SDL_SCANCODE_C:
-                        player.move(1, 1); break;
-                    case SDL_SCANCODE_F8:
-                        printf("Recomputing world.");
-                        map.compute(); break;
-                    default: break;
+                if (ui) {
+                    switch (event.key.scancode) {
+                        case SDL_SCANCODE_I:
+                            fmt::print("UI off.\n");
+                            ui = false;
+                        default: player.acted = true; break;
+                    }
+                } else {
+                    switch (event.key.scancode) {
+                        case SDL_SCANCODE_W:
+                            player.move(0, -1); break;
+                        case SDL_SCANCODE_A:
+                            player.move(-1, 0); break;
+                        case SDL_SCANCODE_S:
+                            player.move(0, 1); break;
+                        case SDL_SCANCODE_D:
+                            player.move(1, 0); break;
+                        case SDL_SCANCODE_Q:
+                            player.move(-1, -1); break;
+                        case SDL_SCANCODE_E:
+                            player.move(1, -1); break;
+                        case SDL_SCANCODE_Z:
+                            player.move(-1, 1); break;
+                        case SDL_SCANCODE_C:
+                            player.move(1, 1); break;
+                        case SDL_SCANCODE_F8:
+                            printf("Recomputing world.");
+                            map.compute(); break;
+                        case SDL_SCANCODE_I:
+                            fmt::print("UI on.\n");
+                            ui = true; break;
+                        default: break;
+                    }
                 }
             default: break;
         }
@@ -63,7 +75,14 @@ void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal,
     }
 }
 
-void Game::render() {
+void Game::render_ui() {
+    console.clear();
+    static constexpr std::array<int, 9> LEGEND = {0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23};
+    tcod::draw_frame(console, {1, 1, 78, 48}, LEGEND, {{255, 255, 255}}, {{0, 0, 0}}, TCOD_BKGND_DEFAULT, false);
+    context.present(console);
+}
+
+void Game::render_game() {
     Creature& player = creatures[0];
     console.clear();
     map.render(console);
@@ -142,16 +161,24 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
 
 [[noreturn]] void Game::run() {
     while (true) {
-        render();
-        handle_events(); // Input event from player/os
-        map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-        if (randomizer->getFloat(0, 1) > 0.01) {
-            spawn(ORC);
+        if (ui) {
+            render_ui();
+        } else {
+            render_game();
         }
-        for (Entity& entity : creatures) { // Do monster ai/check for death
-            if (map.fmap.isInFov(entity.x, entity.y)) {
-                entity.update();
+        handle_events(); // Input event from player/os
+        if (!ui) {
+            map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
+            if (randomizer->getFloat(0, 1) > 0.01) {
+                spawn(ORC);
             }
+            for (Entity& entity : creatures) { // Do monster ai/check for death
+                if (map.fmap.isInFov(entity.x, entity.y)) {
+                    entity.update();
+                }
+            }
+        } else {
+            creatures[0].update();
         }
     }
 }
