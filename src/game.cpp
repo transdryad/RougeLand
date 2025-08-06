@@ -75,11 +75,19 @@ void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal,
     }
 }
 
-void Game::draw_text(tcod::Console& rconsole, std::string text, int x, int y, tcod::ColorRGB topc, tcod::ColorRGB bottomc) {
+void Game::draw_text(tcod::Console& rconsole, std::string text, int x, int y, int length, tcod::ColorRGB topc, tcod::ColorRGB bottomc) {
     int tlength = text.length();
-    for (int i; i < tlength; i++) {
-        char character = text.at(i);
-        tcod::print(rconsole, {x + i, y}, std::string(1, character), topc, bottomc);
+    fmt::print("{}\n", tlength);
+    int ch = 0;
+    for (int j = 0; j < tlength / static_cast<double>(length); j++) {
+        printf("line");
+        fmt::print("j: {}, tlength: {}, length: {}, t/l: {}", j, tlength, length, tlength/length);
+        for (int i = 0; i < length; i++) {
+            if (ch >= tlength) break;
+            char character = text.at(ch);
+            tcod::print(rconsole, {x + i, y + j}, std::string(1, character), topc, bottomc);
+            ++ch;
+        }
     }
 }
 
@@ -109,7 +117,7 @@ void Game::render_game() {
     tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 1000), {{255, 255, 255}}, std::nullopt);
 
     if (messages.size() > 0) {
-        draw_text(console, messages.front(), 25, 47, {255,255,255}, {0,0,0});
+        draw_text(console, messages.front(), 25, 47, 35, {255,255,255}, {0,0,0});
     }
 
     context.present(console);
@@ -169,7 +177,7 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     context = tcod::Context(params);
 
     map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-    messages.push_back("This is a test message.");
+    messages.push_back("This is a test message that tests the line wrapping of the message system.");
 }
 
 [[noreturn]] void Game::run() {
