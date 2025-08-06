@@ -3,6 +3,8 @@
 #include "libtcod.hpp"
 #include "spdlog/spdlog.h"
 #include <vector>
+#include <string>
+#include <list>
 
 #include "creature.hpp"
 #include "entity.hpp"
@@ -14,6 +16,7 @@ class Game {
         std::shared_ptr<spdlog::logger> logger;
         std::vector<Creature> creatures;
         std::vector<Item> items;
+        std::list<std::string> messages;
         GameMap map;
         bool ui;
         TCODRandom* randomizer = TCODRandom::getInstance();
@@ -23,6 +26,7 @@ class Game {
         [[noreturn]] void run();
         void handle_events();
         static void draw_bar(tcod::Console& rconsole, int curVal, int maxVal, int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, int x, int y);
+        void draw_text(tcod::Console& rconsole, std::string text, int x, int y, tcod::ColorRGB topc, tcod::ColorRGB bottomc);
         void render_game();
         void render_ui();
         void spawn(CreatureType etype);

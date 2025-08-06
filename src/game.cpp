@@ -75,6 +75,14 @@ void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal,
     }
 }
 
+void Game::draw_text(tcod::Console& rconsole, std::string text, int x, int y, tcod::ColorRGB topc, tcod::ColorRGB bottomc) {
+    int tlength = text.length();
+    for (int i; i < tlength; i++) {
+        char character = text.at(i);
+        tcod::print(rconsole, {x + i, y}, std::string(1, character), topc, bottomc);
+    }
+}
+
 void Game::render_ui() {
     console.clear();
     static constexpr std::array<int, 9> LEGEND = {0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23, 0x23};
@@ -99,6 +107,10 @@ void Game::render_game() {
 
     draw_bar(console, player.xp, 1000, 24, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
     tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 1000), {{255, 255, 255}}, std::nullopt);
+
+    if (messages.size() > 0) {
+        draw_text(console, messages.front(), 25, 47, {255,255,255}, {0,0,0});
+    }
 
     context.present(console);
 }
@@ -157,6 +169,7 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     context = tcod::Context(params);
 
     map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
+    messages.push_back("This is a test message.");
 }
 
 [[noreturn]] void Game::run() {
