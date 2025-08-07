@@ -15,6 +15,7 @@
 #include "creature.hpp"
 #include "map.hpp"
 #include <ctime>
+#include <sstream>
 
 void Game::handle_events() {
     //logger->info(fmt::format("Player.acted = %s.\n", player.acted ? "true" : "false"));
@@ -77,18 +78,39 @@ void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal,
 
 void Game::draw_text(tcod::Console& rconsole, std::string text, int x, int y, int length, tcod::ColorRGB topc, tcod::ColorRGB bottomc) {
     int tlength = text.length();
-    fmt::print("{}\n", tlength);
-    int ch = 0;
-    for (int j = 0; j < tlength / static_cast<double>(length); j++) {
-        printf("line");
-        fmt::print("j: {}, tlength: {}, length: {}, t/l: {}", j, tlength, length, tlength/length);
-        for (int i = 0; i < length; i++) {
-            if (ch >= tlength) break;
-            char character = text.at(ch);
-            tcod::print(rconsole, {x + i, y + j}, std::string(1, character), topc, bottomc);
-            ++ch;
-        }
+    std::istringstream iss(text);
+    std::vector<std::string> words;
+    do {
+        std::string word;
+        iss >> word;
+        words.push_back(word);
+    } while (iss);
+    int current_width = 0;
+    int ox = x;
+    for (int j = 0; j < words.size(); j++) {
+        std::string word = words[j];
+        if ((current_width + word.length() + 1) <= length) {
+            for (int i = 0; i < word.length(); i++) {
+                char ch = word.at(i);
+                tcod::print(rconsole, {x, y}, std::string(1, ch), topc, bottomc);
+                ++x;
+            }
+            ++x;
+            current_width += word.length() + 1;
+        } else { ++y; x = ox; current_width = 0; --j;}
     }
+    //fmt::print("{}\n", tlength);
+    //int ch = 0;
+    //for (int j = 0; j < tlength / static_cast<double>(length); j++) {
+        //printf("line");
+        //fmt::print("j: {}, tlength: {}, length: {}, t/l: {}", j, tlength, length, tlength/length);
+        //for (int i = 0; i < length; i++) {
+            //if (ch >= tlength) break;
+            //char character = text.at(ch);
+            //tcod::print(rconsole, {x + i, y + j}, std::string(1, character), topc, bottomc);
+            //++ch;
+        //}
+    //}
 }
 
 void Game::render_ui() {
@@ -117,7 +139,7 @@ void Game::render_game() {
     tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 1000), {{255, 255, 255}}, std::nullopt);
 
     if (messages.size() > 0) {
-        draw_text(console, messages.front(), 25, 47, 35, {255,255,255}, {0,0,0});
+        draw_text(console, messages.front(), 25, 46, 35, {255,255,255}, {0,0,0});
     }
 
     context.present(console);
