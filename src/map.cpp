@@ -94,11 +94,11 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
     rooms.emplace_back(top_x, top_y, bottom_x, bottom_y, node);
     rooms.back().draw(*this);
 
-    int inum = random->getInt(1, 3);
+    int inum = random->getInt(1, 4);
     for (int i = 0; i < inum; i++) {
         int ix = random->getInt(top_x, bottom_x - 1);
         int iy = random->getInt(top_y, bottom_y - 1);
-        auto itype = static_cast<ItemType>(random->getInt(0, 2));
+        auto itype = static_cast<ItemType>(random->getInt(0, 3));
         game.logger->info(fmt::format("Checking location: {}, {}, {}.", ix, iy, isWalkable(ix, iy)));
         if (isWalkable(ix, iy)) {
             game.logger->info("New Item.");
@@ -107,6 +107,8 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
                     items.emplace_back(itype, ix, iy, random->getInt(1, 4), *this); break;
                 case HELMET:
                     items.emplace_back(itype, ix, iy, random->getInt(1, 2), *this); break;
+                case POTION:
+                    items.emplace_back(itype, ix, iy, random->getInt(1, 5), *this); break;
                 default: break;
             }
         }

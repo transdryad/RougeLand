@@ -22,6 +22,10 @@ Item::Item(const ItemType type, const int x, const int y, int value, GameMap& ma
         case HELMET:
             character = "^";
             color = {119, 119, 119}; break;
+        case POTION:
+            //character = "";
+            character = "p";
+            color = {255, 215, 0}; break;
         default: break;
     }
 }

@@ -8,7 +8,7 @@ class Entity;
 class GameMap;
 
 enum ItemType {
-    SWORD, HELMET
+    SWORD, HELMET, POTION
 };
 
 class Item : public Entity {

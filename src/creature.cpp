@@ -72,6 +72,8 @@ void Creature::move(const int dx, const int dy) {
                             attack += it.value; break;
                         case (HELMET):
                             ac += it.value; break;
+                        case (POTION):
+                            hp += it.value; maxHp += 1; if (hp > maxHp) hp = maxHp; break;
                         default: break;
                     }
                     it.x = 0;
