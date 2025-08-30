@@ -142,6 +142,8 @@ void Game::render_game() {
         draw_text(console, messages.front(), 25, 46, 35, {255,255,255}, {0,0,0});
     }
 
+    tcod::print(console, {1, 48}, fmt::format("ATK: {}, AC: {}", player.attack, player.ac), {{255, 255, 255}}, std::nullopt);
+
     context.present(console);
 }
 
@@ -151,9 +153,9 @@ void Game::spawn(const CreatureType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, map)); break;
+            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, map, 1)); break;
         case ORC:
-            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, map)); break;
+            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, map, 5)); break;
         default: break;
     }
     creatures.back().spawn();
@@ -199,7 +201,8 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     context = tcod::Context(params);
 
     map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-    messages.push_back("This is a test message that tests the line wrapping of the message system.");
+    messages.push_back("Welcome to RougeLand. I know it's misspelled.");
+    //messages.push_back("This is a test message that tests the line wrapping of the message system.");
 }
 
 [[noreturn]] void Game::run() {
@@ -212,7 +215,7 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
         handle_events(); // Input event from player/os
         if (!ui) {
             map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-            if (randomizer->getFloat(0, 1) > 0.01) {
+            if (randomizer->getFloat(0, 1) < 0.3) {
                 spawn(ORC);
             }
             for (Entity& entity : creatures) { // Do monster ai/check for death

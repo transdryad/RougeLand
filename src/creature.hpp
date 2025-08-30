@@ -22,7 +22,7 @@ class Creature : public Entity {
         int xpval;
         int ac;
         std::vector<Item> items;
-        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map);
+        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map, int attack);
         void move(int dx, int dy);
         void damage(int ar, int damage);
         void experience(int exp);

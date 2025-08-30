@@ -13,7 +13,6 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
     this->color = color;
 }
 
-
 void Entity::spawn() {
     TCODRandom* randomizer = TCODRandom::getInstance();
     while (!map.get().isWalkable(x, y)) {

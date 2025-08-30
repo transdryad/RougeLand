@@ -11,11 +11,11 @@ void Creature::render(tcod::Console& rconsole) {
     }
 }
 
-Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, GameMap& map): Entity(x, y, character, color,map){
+Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, GameMap& map, int attack): Entity(x, y, character, color,map){
     this->x = x;
     this->y = y;
     this->ai = ai;
-    this->attack = 2;
+    this->attack = attack;
     this->player = player;
     this->character = character;
     this->color = color;
@@ -39,14 +39,7 @@ void Creature::experience(const int exp) {
 }
 
 void Creature::damage(int ar, const int damage) {
-    int acbuff = 0;
-    for (const Item& item : items) {
-        if (item.equipped && item.itype == HELMET) { 
-            acbuff = item.value;
-            break;
-        }
-    }
-    if (ar >= ac + acbuff) {
+    if (ar >= ac) {
         hp -= damage;
     }
     if (hp <= 0) {
@@ -62,16 +55,9 @@ void Creature::move(const int dx, const int dy) {
             bool occupied = false;
             for (auto& c : map.get().entities) {
                 if (c.x == x + dx && c.y == y + dy) {
-                    if (c.living) {
-                        int sattack = 0;
-                        for (const Item& item : items) {
-                            if (item.itype == SWORD && item.equipped) {
-                                sattack = item.value;
-                                break;
-                            }
-                        }
+                    if (c.living) {                   
                         occupied = true;
-                        c.damage(TCODRandom::getInstance()->getInt(1, 20), attack + sattack);
+                        c.damage(TCODRandom::getInstance()->getInt(1, 20), attack);
                         if (!c.living) {
                             experience(c.xpval);
                             c.xpval = 0;
@@ -81,6 +67,13 @@ void Creature::move(const int dx, const int dy) {
             }
             for (int i = 0; i < map.get().items.size(); i++) {
                 if (Item it = map.get().items[i]; it.x == x + dx && it.y == y + dy) {
+                    switch (it.itype) {
+                        case (SWORD):
+                            attack += it.value; break;
+                        case (HELMET):
+                            ac += it.value; break;
+                        default: break;
+                    }
                     it.x = 0;
                     it.y = 0;
                     it.equipped = true;
