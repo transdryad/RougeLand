@@ -17,7 +17,9 @@ class Game {
         std::vector<Creature> creatures;
         std::vector<Item> items;
         std::list<std::string> messages;
-        GameMap map;
+        //GameMap map;
+        int level;
+        std::vector<GameMap> levels;
         bool ui;
         TCODRandom* randomizer = TCODRandom::getInstance();
         tcod::Console console;

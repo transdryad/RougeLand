@@ -56,7 +56,7 @@ void Game::handle_events() {
                             player.move(1, 1); break;
                         case SDL_SCANCODE_F8:
                             printf("Recomputing world.");
-                            map.compute(); break;
+                            levels[level].compute(); break;
                         case SDL_SCANCODE_I:
                             fmt::print("UI on.\n");
                             ui = true; break;
@@ -123,7 +123,7 @@ void Game::render_ui() {
 void Game::render_game() {
     Creature& player = creatures[0];
     console.clear();
-    map.render(console);
+    levels[level].render(console);
     for (Creature& entity : creatures) {
         entity.render(console);
     }
@@ -136,7 +136,7 @@ void Game::render_game() {
     tcod::print(console, {1, 46}, fmt::format("HP: {}/{}", player.hp, player.maxHp), {{255, 255, 255}}, std::nullopt);
 
     draw_bar(console, player.xp, 1000, 24, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
-    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 1000), {{255, 255, 255}}, std::nullopt);
+    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 5000), {{255, 255, 255}}, std::nullopt);
 
     if (messages.size() > 0) {
         draw_text(console, messages.front(), 25, 46, 35, {255,255,255}, {0,0,0});
@@ -153,15 +153,15 @@ void Game::spawn(const CreatureType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, map, 2)); break;
+            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, levels[level], 2)); break;
         case ORC:
-            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, map, 3)); break;
+            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, levels[level], 3)); break;
         default: break;
     }
     creatures.back().spawn();
 }
 
-Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
+Game::Game(const int argc, char* argv[]) {
     ui = false;
     try {
         const time_t now = time(nullptr);
@@ -182,7 +182,9 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     logger->info("Welcome to RougeLand!");
     logger->info("Initializing libTCOD.");
 
-    map.init();
+    level = 0;
+    levels.emplace_back(creatures, items, *this);
+    levels[level].init();
 
     spawn(PLAYER);
     spawn(ORC);
@@ -199,8 +201,9 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
     params.tileset = tileset.get();
 
     context = tcod::Context(params);
-
-    map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
+    fmt::print("Computing FOV.\n");
+    levels[level].fmap.computeFov(creatures[0].x, creatures[0].y, 10);
+    fmt::print("Done.\n");
     messages.push_back("Welcome to RougeLand. I know it's misspelled.");
     //messages.push_back("This is a test message that tests the line wrapping of the message system.");
 }
@@ -214,12 +217,12 @@ Game::Game(const int argc, char* argv[]): map(creatures, items, *this) {
         }
         handle_events(); // Input event from player/os
         if (!ui) {
-            map.fmap.computeFov(creatures[0].x, creatures[0].y, 10);
+            levels[level].fmap.computeFov(creatures[0].x, creatures[0].y, 10);
             if (randomizer->getFloat(0, 1) < 0.3) {
                 spawn(ORC);
             }
             for (Entity& entity : creatures) { // Do monster ai/check for death
-                if (map.fmap.isInFov(entity.x, entity.y)) {
+                if (levels[level].fmap.isInFov(entity.x, entity.y)) {
                     entity.update();
                 }
             }

@@ -23,8 +23,8 @@ Item::Item(const ItemType type, const int x, const int y, int value, GameMap& ma
             character = "^";
             color = {119, 119, 119}; break;
         case POTION:
-            //character = "";
-            character = "p";
+            character = "♠︎";
+            //character = "p";
             color = {255, 215, 0}; break;
         default: break;
     }
