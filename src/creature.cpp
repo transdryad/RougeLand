@@ -4,14 +4,15 @@
 #include <string>
 #include "map.hpp"
 #include "item.hpp"
+#include "game.hpp"
 
 void Creature::render(tcod::Console& rconsole) {
-    if (map.get().fmap.isInFov(x, y)) {
+    if (game.get().levels[game.get().level].fmap.isInFov(x, y)) {
         tcod::print(rconsole, {x, y}, character, color, std::nullopt);
     }
 }
 
-Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, GameMap& map, int attack): Entity(x, y, character, color,map){
+Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, Game& game, int attack): Entity(x, y, character, color, game){
     this->x = x;
     this->y = y;
     this->ai = ai;
@@ -51,9 +52,9 @@ void Creature::damage(int ar, const int damage) {
 
 void Creature::move(const int dx, const int dy) {
     if (!acted) {
-        if (map.get().isWalkable(x + dx, y + dy)) {
+        if (game.get().levels[game.get().level].isWalkable(x + dx, y + dy)) {
             bool occupied = false;
-            for (auto& c : map.get().entities) {
+            for (auto& c : game.get().levels[game.get().level].entities) {
                 if (c.x == x + dx && c.y == y + dy) {
                     if (c.living) {                   
                         occupied = true;
@@ -65,8 +66,8 @@ void Creature::move(const int dx, const int dy) {
                     }
                 }
             }
-            for (int i = 0; i < map.get().items.size(); i++) {
-                if (Item it = map.get().items[i]; it.x == x + dx && it.y == y + dy) {
+            for (int i = 0; i < game.get().levels[game.get().level].items.size(); i++) {
+                if (Item it = game.get().levels[game.get().level].items[i]; it.x == x + dx && it.y == y + dy) {
                     switch (it.itype) {
                         case (SWORD):
                             attack += it.value; break;
@@ -79,7 +80,7 @@ void Creature::move(const int dx, const int dy) {
                     it.x = 0;
                     it.y = 0;
                     it.equipped = true;
-                    map.get().items.erase(map.get().items.begin() + i);
+                    game.get().levels[game.get().level].items.erase(game.get().levels[game.get().level].items.begin() + i);
                     items.emplace_back(it);
                 }
             }
@@ -95,13 +96,13 @@ void Creature::move(const int dx, const int dy) {
 void Creature::update() {
     if (!living && player) {
         printf("You died with %d xp!\n", xp);
-        map.get().wipe();
+        game.get().levels[game.get().level].wipe();
         exit(0);
     }
     if (ai) {
-        auto* path = new TCODPath(&map.get().fmap);
-        if (!(x == map.get().entities[0].x && y == map.get().entities[0].y)) {
-            path->compute(x, y, map.get().entities[0].x, map.get().entities[0].y); //entities[0] is the player
+        auto* path = new TCODPath(&game.get().levels[game.get().level].fmap);
+        if (!(x == game.get().levels[game.get().level].entities[0].x && y == game.get().levels[game.get().level].entities[0].y)) {
+            path->compute(x, y, game.get().levels[game.get().level].entities[0].x, game.get().levels[game.get().level].entities[0].y); //entities[0] is the player
             int nx;
             int ny;
             path->walk(&nx, &ny, true);

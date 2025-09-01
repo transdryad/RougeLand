@@ -104,11 +104,11 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
             game.logger->info("New Item.");
             switch (itype) {
                 case SWORD:
-                    items.emplace_back(itype, ix, iy, random->getInt(1, 4), *this); break;
+                    items.emplace_back(itype, ix, iy, random->getInt(1, 4), game); break;
                 case HELMET:
-                    items.emplace_back(itype, ix, iy, random->getInt(1, 2), *this); break;
+                    items.emplace_back(itype, ix, iy, random->getInt(1, 2), game); break;
                 case POTION:
-                    items.emplace_back(itype, ix, iy, random->getInt(1, 5), *this); break;
+                    items.emplace_back(itype, ix, iy, random->getInt(1, 5), game); break;
                 default: break;
             }
         }

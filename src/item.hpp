@@ -16,7 +16,7 @@ class Item : public Entity {
         ItemType itype;
         int value;
         bool equipped;
-        Item(ItemType type, int x, int y, int value, GameMap& map);
+        Item(ItemType type, int x, int y, int value, Game& game);
         void render(tcod::Console& console) override;
 };
 

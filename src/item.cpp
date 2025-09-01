@@ -4,14 +4,14 @@
 #include "game.hpp"
 
 void Item::render(tcod::Console& console) {
-    map.get().game.logger->info(fmt::format("Rendering item at {}, {}", x, y));
-    if (map.get().fmap.isInFov(x, y)) {
+    game.get().logger->info(fmt::format("Rendering item at {}, {}", x, y));
+    if (game.get().levels[game.get().level].fmap.isInFov(x, y)) {
         tcod::print(console, {x, y}, character, color, std::nullopt);
     }
 }
 
 
-Item::Item(const ItemType type, const int x, const int y, int value, GameMap& map): Entity(Entity(x, y, " ", {0, 0, 0}, map)) {
+Item::Item(const ItemType type, const int x, const int y, int value, Game& game): Entity(Entity(x, y, " ", {0, 0, 0}, game)) {
     this->itype = type;
     this->value = value;
     this->equipped = false;

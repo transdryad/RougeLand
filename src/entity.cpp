@@ -5,8 +5,9 @@
 
 #include "creature.hpp"
 #include "map.hpp"
+#include "game.hpp"
 
-Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, GameMap& map): map(map) {
+Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, Game& game): game(game) {
     this->x = x;
     this->y = y;
     this->character = character;
@@ -15,7 +16,7 @@ Entity::Entity(const int x, const int y, const std::string &character, const tco
 
 void Entity::spawn() {
     TCODRandom* randomizer = TCODRandom::getInstance();
-    while (!map.get().isWalkable(x, y)) {
+    while (!game.get().levels[game.get().level].isWalkable(x, y)) {
         x += randomizer->getInt(-1, 1);
         y += randomizer->getInt(-1, 1);
         std::clamp(x, 0, 80);

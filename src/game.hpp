@@ -11,6 +11,8 @@
 #include "map.hpp"
 #include "item.hpp"
 
+enum CreatureType : int;
+
 class Game {
     public:
         std::shared_ptr<spdlog::logger> logger;

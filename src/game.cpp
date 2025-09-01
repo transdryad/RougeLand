@@ -153,9 +153,9 @@ void Game::spawn(const CreatureType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, levels[level], 2)); break;
+            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, *this, 2)); break;
         case ORC:
-            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, levels[level], 3)); break;
+            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, *this, 3)); break;
         default: break;
     }
     creatures.back().spawn();

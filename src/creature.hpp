@@ -1,10 +1,11 @@
 #pragma once
 #include "map.hpp"
+#include "game.hpp"
 #include "entity.hpp"
 #include "item.hpp"
 #include <string>
 
-enum CreatureType {
+enum CreatureType : int{
     PLAYER, ORC, GOBLIN
 };
 
@@ -22,7 +23,7 @@ class Creature : public Entity {
         int xpval;
         int ac;
         std::vector<Item> items;
-        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, GameMap& map, int attack);
+        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, Game& game, int attack);
         void move(int dx, int dy);
         void damage(int ar, int damage);
         void experience(int exp);

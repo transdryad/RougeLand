@@ -6,6 +6,7 @@
 #include <functional>
 
 class GameMap;
+class Game;
 
 class Entity {
     public:
@@ -14,8 +15,8 @@ class Entity {
         int y;
         std::string character;
         tcod::ColorRGB color;
-        std::reference_wrapper<GameMap> map;
-        Entity(int x, int y, const std::string &character, tcod::ColorRGB color, GameMap& map);
+        std::reference_wrapper<Game> game;
+        Entity(int x, int y, const std::string &character, tcod::ColorRGB color, Game& game);
         virtual void render(tcod::Console& rconsole);
         void spawn();
         virtual void update();
