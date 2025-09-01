@@ -7,11 +7,12 @@
 #include "map.hpp"
 #include "game.hpp"
 
-Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, Game& game): game(game) {
+Entity::Entity(const int x, const int y, const std::string &character, const tcod::ColorRGB color, Game& game, int level): game(game) {
     this->x = x;
     this->y = y;
     this->character = character;
     this->color = color;
+    this->level = level;
 }
 
 void Entity::spawn() {

@@ -5,13 +5,13 @@
 
 void Item::render(tcod::Console& console) {
     game.get().logger->info(fmt::format("Rendering item at {}, {}", x, y));
-    if (game.get().levels[game.get().level].fmap.isInFov(x, y)) {
+    if (game.get().levels[game.get().level].fmap.isInFov(x, y) && level == game.get().level) {
         tcod::print(console, {x, y}, character, color, std::nullopt);
     }
 }
 
 
-Item::Item(const ItemType type, const int x, const int y, int value, Game& game): Entity(Entity(x, y, " ", {0, 0, 0}, game)) {
+Item::Item(const ItemType type, const int x, const int y, int value, Game& game, int level): Entity(Entity(x, y, " ", {0, 0, 0}, game, level)) {
     this->itype = type;
     this->value = value;
     this->equipped = false;

@@ -136,7 +136,7 @@ void Game::render_game() {
     tcod::print(console, {1, 46}, fmt::format("HP: {}/{}", player.hp, player.maxHp), {{255, 255, 255}}, std::nullopt);
 
     draw_bar(console, player.xp, 1000, 24, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
-    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.level, player.xp, 5000), {{255, 255, 255}}, std::nullopt);
+    tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.xlevel, player.xp, 5000), {{255, 255, 255}}, std::nullopt);
 
     if (messages.size() > 0) {
         draw_text(console, messages.front(), 25, 46, 35, {255,255,255}, {0,0,0});
@@ -153,9 +153,11 @@ void Game::spawn(const CreatureType etype) {
     const int y = random->getInt(0, 45);
     switch (etype) {
         case PLAYER:
-            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, *this, 2)); break;
+            creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, *this, 2, level));
+            fmt::print("Level: {}", level);
+            logger->info("Spawning Player"); break;
         case ORC:
-            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, *this, 3)); break;
+            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, *this, 3, level)); break;
         default: break;
     }
     creatures.back().spawn();

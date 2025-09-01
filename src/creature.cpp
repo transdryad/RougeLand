@@ -7,12 +7,12 @@
 #include "game.hpp"
 
 void Creature::render(tcod::Console& rconsole) {
-    if (game.get().levels[game.get().level].fmap.isInFov(x, y)) {
+    if (game.get().levels[game.get().level].fmap.isInFov(x, y) && level == game.get().level) {
         tcod::print(rconsole, {x, y}, character, color, std::nullopt);
     }
 }
 
-Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, Game& game, int attack): Entity(x, y, character, color, game){
+Creature::Creature(const int x, const int y, const std::string &character, const tcod::ColorRGB color, const bool ai, const int maxHp, const bool player, const int xpval, Game& game, int attack, int level): Entity(x, y, character, color, game, level){
     this->x = x;
     this->y = y;
     this->ai = ai;
@@ -24,7 +24,7 @@ Creature::Creature(const int x, const int y, const std::string &character, const
     this->hp = maxHp;
     this->xpval = xpval;
     this->xp = 0;
-    this->level = 1;
+    this->xlevel = 1;
     this->living = true;
     this->acted = false;
     this->ac = 10;
@@ -32,7 +32,7 @@ Creature::Creature(const int x, const int y, const std::string &character, const
 
 void Creature::experience(const int exp) {
     if (xp + exp >= 1000) {
-        ++level;
+        ++xlevel;
         xp = 0;
     } else {
         xp += exp;
@@ -80,6 +80,7 @@ void Creature::move(const int dx, const int dy) {
                     it.x = 0;
                     it.y = 0;
                     it.equipped = true;
+                    it.level = 0;
                     game.get().levels[game.get().level].items.erase(game.get().levels[game.get().level].items.begin() + i);
                     items.emplace_back(it);
                 }

@@ -15,7 +15,7 @@ class Creature : public Entity {
         int hp;
         int maxHp;
         int attack;
-        int level;
+        int xlevel;
         bool living;
         bool acted;
         bool player;
@@ -23,7 +23,7 @@ class Creature : public Entity {
         int xpval;
         int ac;
         std::vector<Item> items;
-        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, Game& game, int attack);
+        Creature(int x, int y, const std::string &character, tcod::ColorRGB color, bool ai, int maxHp, bool player, int xpval, Game& game, int attack, int level);
         void move(int dx, int dy);
         void damage(int ar, int damage);
         void experience(int exp);
