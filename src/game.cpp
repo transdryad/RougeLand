@@ -120,6 +120,14 @@ void Game::render_ui() {
     context.present(console);
 }
 
+void Game::new_level() {
+    levels.emplace_back(creatures, items, *this);
+    ++level;
+    levels[level].init();
+    creatures[0].spawn();
+    creatures[0].level += 1;
+}
+
 void Game::render_game() {
     Creature& player = creatures[0];
     console.clear();

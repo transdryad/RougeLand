@@ -31,6 +31,7 @@ class Game {
         void handle_events();
         static void draw_bar(tcod::Console& rconsole, int curVal, int maxVal, int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, int x, int y);
         void draw_text(tcod::Console& rconsole, std::string text, int x, int y, int length, tcod::ColorRGB topc, tcod::ColorRGB bottomc);
+        void new_level();
         void render_game();
         void render_ui();
         void spawn(CreatureType etype);
