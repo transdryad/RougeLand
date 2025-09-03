@@ -85,6 +85,16 @@ void Creature::move(const int dx, const int dy) {
                     items.emplace_back(it);
                 }
             }
+            MapTile up_stair = {false, true, false, "<", {255, 255, 255}};
+            MapTile down_stair = {false, true, false, ">", {169, 169, 169}};
+            if (game.get().levels[game.get().level].tiles[x + dx][y + dy] == up_stair) {
+                game.get().up_level();
+                occupied = true;
+            }
+            if (game.get().levels[game.get().level].tiles[x + dx][y + dy] == down_stair) {
+                game.get().down_level();
+                occupied = true;
+            }
             if (!occupied) {
                 x += dx;
                 y += dy;

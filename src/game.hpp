@@ -21,6 +21,7 @@ class Game {
         std::list<std::string> messages;
         //GameMap map;
         int level;
+        int explored_level;
         std::vector<GameMap> levels;
         bool ui;
         TCODRandom* randomizer = TCODRandom::getInstance();
@@ -30,10 +31,12 @@ class Game {
         [[noreturn]] void run();
         void handle_events();
         static void draw_bar(tcod::Console& rconsole, int curVal, int maxVal, int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, int x, int y);
+        void down_level();
         void draw_text(tcod::Console& rconsole, std::string text, int x, int y, int length, tcod::ColorRGB topc, tcod::ColorRGB bottomc);
         void new_level();
         void render_game();
         void render_ui();
         void spawn(CreatureType etype);
+        void up_level();
         Game(int argc, char* argv[]);
 };

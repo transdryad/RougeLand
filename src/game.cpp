@@ -68,6 +68,10 @@ void Game::handle_events() {
     }
 }
 
+void Game::up_level() {}
+
+void Game::down_level() {}
+
 void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal, const int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, const int x, const int y) {
     const int bar_width = static_cast<double>(curVal) / maxVal * width;
     tcod::draw_rect(rconsole, {x, y, width, 1}, 1, std::nullopt, bottomc);
@@ -193,6 +197,7 @@ Game::Game(const int argc, char* argv[]) {
     logger->info("Initializing libTCOD.");
 
     level = 0;
+    explored_level = 0;
     levels.emplace_back(creatures, items, *this);
     levels[level].init();
 

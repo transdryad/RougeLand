@@ -23,6 +23,14 @@ struct MapTile{
     tcod::ColorRGB color;
 };
 
+inline bool operator==(const MapTile& lhs, const MapTile& rhs) {
+    return lhs.solid == rhs.solid &&
+        lhs.walkable == rhs.walkable &&
+        lhs.explored == rhs.explored &&
+        lhs.character == rhs.character &&
+        lhs.color == rhs.color;
+}
+
 struct Point{
     double x;
     double y;
