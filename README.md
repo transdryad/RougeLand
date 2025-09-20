@@ -17,7 +17,7 @@ For controls, it uses WASD and QEZC for diagonals (assumes US layout).
 ## Installation
 If available, download the latest release from releases. Alternatively, compile from source:
 
-RougeLand requires SDL3, ZLIB, Meson, CMake, and a C++ compile & standard library to be installed and available on the system for compilation.
+RougeLand requires SDL3, ZLIB, Meson, CMake, and a C++ compiler & standard library to be installed and available on the system for compilation.
 Clone this git repo, and then cd into it in the terminal.
 
 ```bash
