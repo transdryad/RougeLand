@@ -23,10 +23,9 @@ struct MapTile{
     tcod::ColorRGB color;
 };
 
-inline bool operator==(const MapTile& lhs, const MapTile& rhs) {
+inline bool operator==(const MapTile& lhs, const MapTile& rhs) { //not compareing explored because of dungeon level checking.
     return lhs.solid == rhs.solid &&
         lhs.walkable == rhs.walkable &&
-        lhs.explored == rhs.explored &&
         lhs.character == rhs.character &&
         lhs.color == rhs.color;
 }
@@ -69,6 +68,8 @@ class GameMap{
         void init();
         TCODBsp bsptree;
         TCODMap fmap;
+        MapTile up_stair = {false, true, false, "<", {255, 255, 255}};
+        MapTile down_stair = {false, true, false, ">", {169, 169, 169}};
         std::vector<Creature>& entities;
         std::vector<Item>& items;
         MapTile tiles[80][45];

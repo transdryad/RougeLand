@@ -16,6 +16,7 @@
 #include "map.hpp"
 #include <ctime>
 #include <sstream>
+#include <algorithm>
 
 void Game::handle_events() {
     //logger->info(fmt::format("Player.acted = %s.\n", player.acted ? "true" : "false"));
@@ -68,9 +69,25 @@ void Game::handle_events() {
     }
 }
 
-void Game::up_level() {}
+void Game::up_level() {
+    --level;
+    creatures[0].level = level;
+    creatures[0].x = levels[level].rooms.back().cx;
+    creatures[0].y = levels[level].rooms.back().cy;
+}
 
-void Game::down_level() {}
+void Game::down_level() {
+    fmt::print("Down Level");
+    ++level;
+    if (level > explored_level) {
+        ++explored_level;
+        levels.emplace_back(creatures, items, *this);
+        levels[level].init();
+    }
+    creatures[0].level = level;
+    creatures[0].x = levels[level].rooms.front().cx;
+    creatures[0].y = levels[level].rooms.front().cy;
+}
 
 void Game::draw_bar(tcod::Console& rconsole, const int curVal, const int maxVal, const int width, tcod::ColorRGB topc, tcod::ColorRGB bottomc, const int x, const int y) {
     const int bar_width = static_cast<double>(curVal) / maxVal * width;
@@ -151,7 +168,7 @@ void Game::render_game() {
     tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.xlevel, player.xp, 5000), {{255, 255, 255}}, std::nullopt);
 
     if (messages.size() > 0) {
-        draw_text(console, messages.front(), 25, 46, 35, {255,255,255}, {0,0,0});
+        draw_text(console, messages.back(), 25, 46, 35, {255,255,255}, {0,0,0});
     }
 
     tcod::print(console, {1, 48}, fmt::format("ATK: {}, AC: {}", player.attack, player.ac), {{255, 255, 255}}, std::nullopt);
@@ -161,15 +178,23 @@ void Game::render_game() {
 
 void Game::spawn(const CreatureType etype) {
     TCODRandom* random = TCODRandom::getInstance();
-    const int x = random->getInt(0, 80);
-    const int y = random->getInt(0, 45);
+    int x = random->getInt(0, 80);
+    int y = random->getInt(0, 45);
+    x = std::clamp(x, 0, 80);
+    y = std::clamp(y, 0, 45);
     switch (etype) {
+        int maxHp;
+        int attack;
         case PLAYER:
             creatures.emplace_back(Creature(x, y, "@", {210, 210, 255}, false, 20, true, 50, *this, 2, level));
             fmt::print("Level: {}", level);
             logger->info("Spawning Player"); break;
         case ORC:
-            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, 10, false, 25, *this, 3, level)); break;
+            maxHp = creatures[0].maxHp + random->getInt(-5, 4);
+            maxHp = std::clamp(maxHp, 1, creatures[0].maxHp + 5);
+            attack = creatures[0].attack + random->getInt(-2, 3);
+            attack = std::clamp(attack, 1, creatures[0].attack + 4);
+            creatures.emplace_back(Creature(x, y, "o", {0, 200, 0}, true, maxHp, false, 25, *this, attack, level)); break;
         default: break;
     }
     creatures.back().spawn();
@@ -233,11 +258,11 @@ Game::Game(const int argc, char* argv[]) {
         handle_events(); // Input event from player/os
         if (!ui) {
             levels[level].fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-            if (randomizer->getFloat(0, 1) < 0.3) {
+            if (randomizer->getFloat(0, 1) < 0.19) {
                 spawn(ORC);
             }
             for (Entity& entity : creatures) { // Do monster ai/check for death
-                if (levels[level].fmap.isInFov(entity.x, entity.y)) {
+                if (levels[level].fmap.isInFov(entity.x, entity.y) && entity.level == level) {
                     entity.update();
                 }
             }

@@ -1,5 +1,5 @@
 #!/bin/bash
-rm -rf buildDir
+rm -rf build
 rm -rf subprojects/libtcod/
-meson setup --prefer-static --default-library=static buildDir
-meson compile -C buildDir
+meson setup --prefer-static --default-library=static build
+meson compile -C build

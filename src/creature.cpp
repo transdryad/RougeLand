@@ -39,10 +39,8 @@ void Creature::experience(const int exp) {
     }
 }
 
-void Creature::damage(int ar, const int damage) {
-    if (ar >= ac) {
-        hp -= damage;
-    }
+void Creature::damage(const int damage) {
+    hp -= damage;
     if (hp <= 0) {
         living = false;
         ai = false;
@@ -51,14 +49,21 @@ void Creature::damage(int ar, const int damage) {
 }
 
 void Creature::move(const int dx, const int dy) {
+    GameMap& map = game.get().levels[game.get().level];
     if (!acted) {
-        if (game.get().levels[game.get().level].isWalkable(x + dx, y + dy)) {
+        if (map.isWalkable(x + dx, y + dy)) {
             bool occupied = false;
-            for (auto& c : game.get().levels[game.get().level].entities) {
-                if (c.x == x + dx && c.y == y + dy) {
+            for (auto& c : map.entities) {
+                if (c.x == x + dx && c.y == y + dy && c.level == level) {
                     if (c.living) {                   
                         occupied = true;
-                        c.damage(TCODRandom::getInstance()->getInt(1, 20), attack);
+                        int ar = TCODRandom::getInstance()->getInt(1, 20);
+                        if (ar >= c.ac) {
+                            if (player) {game.get().messages.push_back(fmt::format("Attack of {} does {} damage", ar, attack));}
+                            c.damage(attack);
+                        } else {
+                            if (player) {game.get().messages.push_back(fmt::format("Attack failed with a roll of {}.", ar));}
+                        }
                         if (!c.living) {
                             experience(c.xpval);
                             c.xpval = 0;
@@ -66,8 +71,8 @@ void Creature::move(const int dx, const int dy) {
                     }
                 }
             }
-            for (int i = 0; i < game.get().levels[game.get().level].items.size(); i++) {
-                if (Item it = game.get().levels[game.get().level].items[i]; it.x == x + dx && it.y == y + dy) {
+            for (int i = 0; i < map.items.size(); i++) {
+                if (Item it = map.items[i]; it.x == x + dx && it.y == y + dy && it.level == level) {
                     switch (it.itype) {
                         case (SWORD):
                             attack += it.value; break;
@@ -81,17 +86,15 @@ void Creature::move(const int dx, const int dy) {
                     it.y = 0;
                     it.equipped = true;
                     it.level = 0;
-                    game.get().levels[game.get().level].items.erase(game.get().levels[game.get().level].items.begin() + i);
+                    map.items.erase(map.items.begin() + i);
                     items.emplace_back(it);
                 }
             }
-            MapTile up_stair = {false, true, false, "<", {255, 255, 255}};
-            MapTile down_stair = {false, true, false, ">", {169, 169, 169}};
-            if (game.get().levels[game.get().level].tiles[x + dx][y + dy] == up_stair) {
+            if (map.tiles[x + dx][y + dy] == map.up_stair) {
                 game.get().up_level();
                 occupied = true;
             }
-            if (game.get().levels[game.get().level].tiles[x + dx][y + dy] == down_stair) {
+            if (map.tiles[x + dx][y + dy] == map.down_stair) {
                 game.get().down_level();
                 occupied = true;
             }

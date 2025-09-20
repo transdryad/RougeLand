@@ -20,10 +20,8 @@ void Entity::spawn() {
     while (!game.get().levels[game.get().level].isWalkable(x, y)) {
         x += randomizer->getInt(-1, 1);
         y += randomizer->getInt(-1, 1);
-        std::clamp(x, 0, 80);
-        std::clamp(y, 0, 45);
-        //if (x >= 80) x = 80;
-        //if (y >= 45) y = 45;
+        x = std::clamp(x, 0, 80);
+        y = std::clamp(y, 0, 45);
     }
 }
 

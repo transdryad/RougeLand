@@ -206,8 +206,10 @@ void GameMap::compute() {
     for (Hallway& hall : halls) {
         hall.draw(*this);
     }
-    tiles[rooms.front().cx][rooms.front().cy] = {false, true, false, "<", {255, 255, 255}}; //up staircase
-    tiles[rooms.back().cx][rooms.back().cy] = {false, true, false, ">", {169, 169, 169}}; //down staircase
+    if (game.level != 0) {
+        tiles[rooms.front().cx][rooms.front().cy] = up_stair; //up staircase
+    }
+    tiles[rooms.back().cx][rooms.back().cy] = down_stair; //down staircase
     for (int y = 0; y < 45; y++) {
         for (int x = 0; x < 80; x++) {
             MapTile& tile = tiles[x][y];
