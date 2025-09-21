@@ -16,6 +16,7 @@ For controls, it uses WASD and QEZC for diagonals (assumes US layout).
 'lightbulb' - Health Potion
 ## Installation
 If available, download the appropriate zip file from releases. Uzip, and the executable is within the build folder. DO NOT MOVE IT.
+Windows users will need to download and install the latest approriate C++ [runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe).
 
 To compile from source:
 
