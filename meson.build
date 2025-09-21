@@ -1,15 +1,18 @@
 project('RougeLand', 'cpp',
         version : '1.0.0',
-        default_options : ['default_library=static', 'prefer_static=true', 'warning_level=3', 'cpp_std=c++23', 'buildtype=debug'])
+        default_options : ['default_library=static', 'prefer_static=true', 'warning_level=3', 'cpp_std=c++20', 'buildtype=debug'])
 
 cmake = import('cmake')
 opt_var = cmake.subproject_options()
 
+opt_var.add_cmake_defines({'LIBTCOD_SDL3': 'find_package'})
+opt_var.add_cmake_defines({'LIBTCOD_ZLIB': 'disable'})
 opt_var.add_cmake_defines({'LIBTCOD_LODEPNG': 'vendored'})
 opt_var.add_cmake_defines({'LIBTCOD_UTF8PROC': 'vendored'})
 opt_var.add_cmake_defines({'LIBTCOD_STB': 'vendored'})
 opt_var.add_cmake_defines({'C_STANDARD': '23'})
 opt_var.add_cmake_defines({'CXX_STANDARD': '23'})
+opt_var.add_cmake_defines({'SDL3_DIR': 'C:\Users\Hazel\Downloads\SDL3-devel-3.2.22-mingw\SDL3-3.2.22\cmake'})
 
 sub_pro = cmake.subproject('libtcod', options: opt_var)
 
