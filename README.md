@@ -1,5 +1,6 @@
 # RougeLand
 [![Athena Award Badge](https://img.shields.io/endpoint?url=https%3A%2F%2Faward.athena.hackclub.com%2Fapi%2Fbadge)](https://award.athena.hackclub.com?utm_source=readme)
+
 RougeLand is a simple, minimalism roguelike game. There are monsters to fight, loot to gather, and potions to increase your health. In an infinite dungeon, what more could you want?
 
 For controls, it uses WASD and QEZC for diagonals (assumes US layout).
