@@ -10,6 +10,8 @@ log.txt
 subprojects/libtcod
 subprojects/libtcod/
 subprojects/libtcod/*
+subprojects/*
+!subprojects/*.wrap
 
 vgcore*
 

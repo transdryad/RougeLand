@@ -1,25 +1,42 @@
 project('RougeLand', 'cpp',
-        version : '1.0.0',
+        version : '1.0.1',
         default_options : ['default_library=static', 'prefer_static=true', 'warning_level=3', 'cpp_std=c++20', 'buildtype=debug'])
+        
+name = 'RougeLand-' + meson.project_version()
 
 cmake = import('cmake')
 opt_var = cmake.subproject_options()
 
-opt_var.add_cmake_defines({'LIBTCOD_SDL3': 'find_package'})
-opt_var.add_cmake_defines({'LIBTCOD_ZLIB': 'disable'})
-opt_var.add_cmake_defines({'LIBTCOD_LODEPNG': 'vendored'})
-opt_var.add_cmake_defines({'LIBTCOD_UTF8PROC': 'vendored'})
-opt_var.add_cmake_defines({'LIBTCOD_STB': 'vendored'})
-opt_var.add_cmake_defines({'C_STANDARD': '23'})
-opt_var.add_cmake_defines({'CXX_STANDARD': '23'})
-opt_var.add_cmake_defines({'SDL3_DIR': 'C:\Users\Hazel\Downloads\SDL3-devel-3.2.22-mingw\SDL3-3.2.22\cmake'})
+if host_machine.system() == 'windows' or host_machine.system() == 'cygwin'
+	opt_var.add_cmake_defines({'LIBTCOD_SDL3': 'find_package'})
+	opt_var.add_cmake_defines({'LIBTCOD_ZLIB': 'disable'})
+	opt_var.add_cmake_defines({'LIBTCOD_LODEPNG': 'vendored'})
+	opt_var.add_cmake_defines({'LIBTCOD_UTF8PROC': 'vendored'})
+	opt_var.add_cmake_defines({'LIBTCOD_STB': 'vendored'})
+	opt_var.add_cmake_defines({'C_STANDARD': '23'})
+	opt_var.add_cmake_defines({'CXX_STANDARD': '23'})
+	opt_var.add_cmake_defines({'SDL3_DIR': 'C:\Users\Hazel\Downloads\SDL3-devel-3.2.22-mingw\SDL3-3.2.22\cmake'})
+	
+	sub_pro = cmake.subproject('libtcod', options: opt_var)
 
-sub_pro = cmake.subproject('libtcod', options: opt_var)
+	spdlog = dependency('spdlog')
+	fmt = dependency('fmt')
+	libtcod = sub_pro.dependency('libtcod')
+	sdl = dependency('sdl3')
 
-spdlog = dependency('spdlog')
-fmt = dependency('fmt')
-libtcod = sub_pro.dependency('libtcod')
+	RougeLand = executable(name, 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', 'src/item.cpp', 'src/creature.cpp', install : true, dependencies: [fmt, spdlog, libtcod, sdl], win_subsystem: 'windows', link_args : ['-mwindows', '-lmingw32'])
+elif host_machine.system() == 'linux'
+	opt_var.add_cmake_defines({'LIBTCOD_LODEPNG': 'vendored'})
+	opt_var.add_cmake_defines({'LIBTCOD_UTF8PROC': 'vendored'})
+	opt_var.add_cmake_defines({'LIBTCOD_STB': 'vendored'})
+	opt_var.add_cmake_defines({'C_STANDARD': '23'})
+	opt_var.add_cmake_defines({'CXX_STANDARD': '23'})
 
-name = 'RougeLand-' + meson.project_version()
+	sub_pro = cmake.subproject('libtcod', options: opt_var)
 
-RougeLand = executable(name, 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', 'src/item.cpp', 'src/creature.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
+	spdlog = dependency('spdlog')
+	fmt = dependency('fmt')
+	libtcod = sub_pro.dependency('libtcod')
+
+	RougeLand = executable(name, 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', 'src/item.cpp', 'src/creature.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
+endif

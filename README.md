@@ -15,14 +15,16 @@ For controls, it uses WASD and QEZC for diagonals (assumes US layout).
 
 'lightbulb' - Health Potion
 ## Installation
-If available, download the latest release from releases. Alternatively, compile from source:
+If available, download the appropriate zip file from releases. Uzip, and the executable is within the build folder. DO NOT MOVE IT.
+
+To compile from source:
 
 RougeLand requires SDL3, ZLIB, Meson, CMake, and a C++ compiler & standard library to be installed and available on the system for compilation.
 Clone this git repo, and then cd into it in the terminal.
 
 ```bash
 meson setup --prefer-static --default-library=static build
-meson compile -C build
+meson compile -v -C build
 ```
 Once compilation completes, the executable will be located inside the build folder, and be named RougeLand.
 ## Why

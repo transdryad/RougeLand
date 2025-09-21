@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <vector>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
+//#include <SDL3/SDL_main.h>
 #include "entity.hpp"
 #include <functional>
 #include "creature.hpp"
@@ -17,6 +17,8 @@
 #include <ctime>
 #include <sstream>
 #include <algorithm>
+#include <iostream>
+#include <filesystem>
 
 void Game::handle_events() {
     //logger->info(fmt::format("Player.acted = %s.\n", player.acted ? "true" : "false"));
@@ -27,6 +29,7 @@ void Game::handle_events() {
         context.convert_event_coordinates(event);
         switch (event.type) {
             case SDL_EVENT_QUIT:
+				spdlog::shutdown();
                 exit(0);
             case SDL_EVENT_KEY_DOWN:
                 //printf("KeyPress\n");
@@ -164,7 +167,7 @@ void Game::render_game() {
     draw_bar(console, player.hp, player.maxHp, 24, {0, 255, 0}, {255, 0, 0}, 0, 46); //hp
     tcod::print(console, {1, 46}, fmt::format("HP: {}/{}", player.hp, player.maxHp), {{255, 255, 255}}, std::nullopt);
 
-    draw_bar(console, player.xp, 1000, 24, {10, 242, 95}, {140, 166, 109}, 0, 47); //xp
+    draw_bar(console, player.xp, 1000, 24, {10, 242, 94}, {140, 166, 109}, 0, 47); //xp
     tcod::print(console, {1, 47}, fmt::format("{}: {}/{}", player.xlevel, player.xp, 5000), {{255, 255, 255}}, std::nullopt);
 
     if (messages.size() > 0) {
@@ -207,14 +210,17 @@ Game::Game(const int argc, char* argv[]) {
         struct tm tstruct{};
         char buf[80];
         tstruct = *localtime(&now);
-        strftime(buf, sizeof(buf), "%Y-%m-%d.%X", &tstruct);
-        std::string fname = "logs/";
+        std::filesystem::create_directory("logs");
+        strftime(buf, sizeof(buf), "%Y-%m-%d.%H-%M-%S", &tstruct);
+        std::string fname = "./logs/";
         fname += buf;
         fname.append("-log.txt");
         logger = spdlog::basic_logger_mt("file", fname);
         spdlog::set_pattern("[%Y-%m-%d %T.%e] [%l] %v");
     } catch (const spdlog::spdlog_ex &ex) {
-        fmt::print(stderr, "Log init failed: {}\n", ex.what());
+        fmt::print(stdout, "Log init failed: {}\n", ex.what());
+        auto em = ex.what();
+        std::cout << ex.what();
         exit(EXIT_FAILURE);
     }
 
@@ -258,7 +264,7 @@ Game::Game(const int argc, char* argv[]) {
         handle_events(); // Input event from player/os
         if (!ui) {
             levels[level].fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-            if (randomizer->getFloat(0, 1) < 0.19) {
+            if (randomizer->getFloat(0, 1) < 0.21) {
                 spawn(ORC);
             }
             for (Entity& entity : creatures) { // Do monster ai/check for death
