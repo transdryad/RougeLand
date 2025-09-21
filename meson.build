@@ -20,4 +20,6 @@ spdlog = dependency('spdlog')
 fmt = dependency('fmt')
 libtcod = sub_pro.dependency('libtcod')
 
-RougeLand = executable('RougeLand', 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', 'src/item.cpp', 'src/creature.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
+name = 'RougeLand-' + meson.project_version()
+
+RougeLand = executable(name, 'src/main.cpp', 'src/entity.cpp', 'src/map.cpp', 'src/game.cpp', 'src/item.cpp', 'src/creature.cpp', install : true, dependencies: [fmt, spdlog, libtcod])
