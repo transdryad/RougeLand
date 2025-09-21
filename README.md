@@ -21,7 +21,8 @@ Windows users will need to download and install the latest approriate C++ [runti
 To compile from source:
 
 RougeLand requires SDL3, ZLIB, Meson, CMake, and a C++ compiler & standard library to be installed and available on the system for compilation.
-Clone this git repo, and then cd into it in the terminal.
+I used the instructions [here](https://learncodethehardway.com/courses/learn-cpp-the-hard-way/1-the-basics/01-gearing-up/).
+Clone this git repo, and then cd into it in the terminal. Biuld file adjust may be necessary depending on your setup.
 
 ```bash
 meson setup --prefer-static --default-library=static build
