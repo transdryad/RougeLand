@@ -20,6 +20,8 @@ For controls, it uses WASD and QEZC for diagonals (assumes US layout).
 If available, download the appropriate zip file from releases. Unzip, and the executable is within the build folder. DO NOT MOVE IT.
 Unfortunately, Windows users will need to download and install the latest approriate C++ [runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe), and follow the instructions [here](https://learncodethehardway.com/courses/learn-cpp-the-hard-way/1-the-basics/01-gearing-up/).
 
+***Launch the executable from the main rougeland directory with .\build\RougeLand-x.x.x.exe or ./build/RougeLand-x.x.x***
+
 To compile from source:
 
 RougeLand requires SDL3, ZLIB, Meson, CMake, and a C++ compiler & standard library to be installed and available on the system for compilation.
