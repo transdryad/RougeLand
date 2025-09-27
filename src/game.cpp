@@ -264,7 +264,7 @@ Game::Game(const int argc, char* argv[]) {
         handle_events(); // Input event from player/os
         if (!ui) {
             levels[level].fmap.computeFov(creatures[0].x, creatures[0].y, 10);
-            if (randomizer->getFloat(0, 1) < 0.21) {
+            if (randomizer->getFloat(0, 1) < 0.18) {
                 spawn(ORC);
             }
             for (Entity& entity : creatures) { // Do monster ai/check for death
