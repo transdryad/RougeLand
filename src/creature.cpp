@@ -58,7 +58,7 @@ void Creature::move(const int dx, const int dy) {
                     if (c.living) {                   
                         occupied = true;
                         int ar = TCODRandom::getInstance()->getInt(1, 20);
-                        if (ar >= c.ac) {
+                        if (ar + attack >= c.ac) {
                             if (player) {game.get().messages.push_back(fmt::format("Attack of {} does {} damage", ar, attack));}
                             c.damage(attack);
                         } else {
