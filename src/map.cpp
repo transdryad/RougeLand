@@ -108,7 +108,7 @@ void GameMap::drawInBounds(const int x, const int y, const int nx, const int ny,
                 case HELMET:
                     items.emplace_back(itype, ix, iy, random->getInt(1, 2), game, game.level); break;
                 case POTION:
-                    items.emplace_back(itype, ix, iy, random->getInt(1, 5), game, game.level); break;
+                    items.emplace_back(itype, ix, iy, random->getInt(2, 10), game, game.level); break;
                 default: break;
             }
         }
